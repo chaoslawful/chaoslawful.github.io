@@ -1,0 +1,10 @@
+- id: null-modem-auto-conf
+  title: WinXP 网线直连环境的一种自动配置方法
+  postedOn: !!str 2015-07-21
+  author: chaoslawful
+  tags: 
+    - Win32
+    - XP
+    - Network
+  abstract: 基于 ARP/DHCP 监听的网线直连环境自动配置方案
+

@@ -1,0 +1,24 @@
+title: 混沌猫的窝
+subtitle: chaoslawful's blog
+link: http://chaoslawful.github.io
+meta:
+  description: chaoslawful's blog
+  keywords: !!seq
+    - Linux
+    - Java
+  author: chaoslawful
+master:
+  name: 王晓哲
+  about: 一只猫
+  email: chaoslawful@gmail.com
+rss:
+  title: 混沌猫的窝
+  desc: 混沌猫的窝
+  lang: zh-cn
+  max: 10
+copyright:
+  owner: Xiaozhe Wang
+  beginYear: 2009
+  endYear: 2015
+theme: default
+codetheme: night
