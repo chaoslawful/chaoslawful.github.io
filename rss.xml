@@ -4,7 +4,7 @@
         <title>混沌猫的窝</title>
         <link>http://chaoslawful.github.io</link>
         <description>混沌猫的窝</description>
-        <lastBuildDate>Tue, 21 Jul 2015 20:54:44 +0800</lastBuildDate>
+        <lastBuildDate>Wed, 22 Jul 2015 11:05:48 +0800</lastBuildDate>
         <language>zh-cn</language>
         
         <item>
@@ -16,13 +16,13 @@
             <description>&lt;h2 id=&quot;背景&quot;&gt;背景&lt;/h2&gt;
 &lt;p&gt;在很多场景下（手头没有 U 盘、某台电脑 USB 口不可用或没有足够权限安装存储设备驱动等等），我们都需要通过网线直连的方式在两台电脑之间传输数据，这样就要求正确地将两台电脑设置为同一子网下的不同静态 IP。对于电脑知识较为丰富的用户来说此设置过程非常简单，但对于一般用户来说就比较困难了，此时就希望通过程序自动配置好这种网络环境。&lt;/p&gt;
 &lt;h2 id=&quot;分析&quot;&gt;分析&lt;/h2&gt;
-&lt;p&gt;这里主要针对 Windows XP 系统自动配置进行分析，因 Vista 以上版本系统已经有了 &lt;code&gt;zeroconf 的实现，有现成的解决方案可用。&lt;/p&gt;
+&lt;p&gt;这里主要针对 Windows XP 系统自动配置进行分析，因 Vista 以上版本系统已经有了 &lt;code&gt;zeroconf&lt;/code&gt; 的实现，有现成的解决方案可用。&lt;/p&gt;
 &lt;p&gt;网卡地址要么是静态设置，要么是动态 DHCP 分配的。对于静态设置 IP 的情况，拔掉再插上网线后 Windows 系统会监测到媒介状态变化，并自动发送若干源 MAC 为对应网卡 MAC，源/目标 IP 均为当前网卡静态设置 IP 的 ARP 包（称为 Gratuitous ARP 包，用来向子网内其他机器或网关主张自己的静态 IP 所有权），若将网线另一侧机器的 IP 设置为同一子网内的地址，两台机器就能正常通讯了。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/uploads/2015-07-21/static-ip-pcap.png&quot; alt=&quot;Static IP Capture&quot; title=&quot;静态 IP 抓包结果&quot;&gt;&lt;/p&gt;
 &lt;p&gt;对于动态 DHCP 分配的情况，拔掉再插上网线后 Windows 系统会自动发送 DHCP 相关请求，要求可能存在的 DHCP 服务器分配 IP，若在网线另一侧机器上运行 DHCP 服务，即可自动设置双机 IP 在同一子网中，也能正常通讯。&lt;/p&gt;
 &lt;p&gt;&lt;img src=&quot;/uploads/2015-07-21/dhcp-ip-pcap.png&quot; alt=&quot;DHCP IP Capture&quot; title=&quot;动态 DHCP 抓包结果&quot;&gt;&lt;/p&gt;
 &lt;h2 id=&quot;实现&quot;&gt;实现&lt;/h2&gt;
-&lt;p&gt;参考实现程序&lt;a href=&quot;https://github.com/chaoslawful/nullconf&quot;&gt;在此&lt;/a&gt;。该程序使用 &lt;code&gt;pcapy 模块操作 &lt;code&gt;WinPCAP 在指定网卡（Windows 环境下通过 &lt;code&gt;wmi 模块自动获得首个可用的有线网卡）上监听数据包，通过 &lt;code&gt;impacket 模块解析后根据数据包特征决定使用静态还是动态配置逻辑，最后用 OS 相关方法设置本地监听的有线网卡 IP 后（Windows 环境下通过 &lt;code&gt;wmi 模块实现）完成双机 IP 配置。&lt;/p&gt;
+&lt;p&gt;参考实现程序&lt;a href=&quot;https://github.com/chaoslawful/nullconf&quot;&gt;在此&lt;/a&gt;。该程序使用 &lt;code&gt;pcapy&lt;/code&gt; 模块操作 &lt;code&gt;WinPCAP&lt;/code&gt; 在指定网卡（Windows 环境下通过 &lt;code&gt;wmi&lt;/code&gt; 模块自动获得首个可用的有线网卡）上监听数据包，通过 &lt;code&gt;impacket&lt;/code&gt; 模块解析后根据数据包特征决定使用静态还是动态配置逻辑，最后用 OS 相关方法设置本地监听的有线网卡 IP 后（Windows 环境下通过 &lt;code&gt;wmi&lt;/code&gt; 模块实现）完成双机 IP 配置。&lt;/p&gt;
 &lt;h2 id=&quot;参考&quot;&gt;参考&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;http://timgolden.me.uk/python/wmi/tutorial.html&quot;&gt;http://timgolden.me.uk/python/wmi/tutorial.html&lt;/a&gt;&lt;/li&gt;
