@@ -4,8 +4,35 @@
         <title>混沌猫的窝</title>
         <link>http://chaoslawful.github.io</link>
         <description>混沌猫的窝</description>
-        <lastBuildDate>Wed, 22 Jul 2015 11:35:56 +0800</lastBuildDate>
+        <lastBuildDate>Fri, 24 Jun 2016 17:45:55 +0800</lastBuildDate>
         <language>zh-cn</language>
+        
+        <item>
+            <title>CentOS 6.x 上安装 GCC 4.9.x 的方法</title>
+            <link>http://chaoslawful.github.io/articles/centos-6-inst-gcc-4.9.html?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=rss</link>
+            <guid>http://chaoslawful.github.io/articles/centos-6-inst-gcc-4.9.html</guid>
+            <author>chaoslawful@gmail.com 王晓哲</author>
+            <pubDate>Fri, 24 Jun 2016 00:00:00 +0800</pubDate>
+            <description>&lt;h2 id=&quot;在-centos-6x-下使用-gcc-49x-的方法&quot;&gt;在 CentOS 6.x 下使用 gcc 4.9.x 的方法&lt;/h2&gt;
+&lt;p&gt;尝试在 CentOS 6.x 下编译使用 PyPy 5.x 时发现其生成的 interpreter.c 使用了 &lt;code&gt;__int128&lt;/code&gt; 内置类型，但系统自带的 gcc 4.4.x 并不支持该类型，所以需要按如下步骤装一个 gcc 4.9.x：&lt;/p&gt;
+&lt;pre class=&quot;prettyprint linenums lang-sh&quot;&gt;$ sudo yum install centos-release-scl
+$ sudo yum install devtoolset-3-gcc devtoolset-3-binutils devtoolset-3-gcc-c++
+# 用如下 scl 命令在新 gcc 环境中执行命令，这里执行的是 bash
+$ scl enable devtoolset-3 bash
+# 进入了新 gcc 环境的 shell，验证一下 gcc 版本
+$ gcc --version
+gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)
+Copyright (C) 2014 Free Software Foundation, Inc.
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$
+&lt;/pre&gt;
+&lt;h3 id=&quot;参考：&quot;&gt;参考：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos&quot;&gt;http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
         
         <item>
             <title>WinXP 网线直连环境的一种自动配置方法</title>

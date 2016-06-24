@@ -1,3 +1,11 @@
+- id: centos-6-inst-gcc-4.9
+  title: CentOS 6.x 上安装 GCC 4.9.x 的方法
+  postedOn: !!str 2016-06-24
+  author: chaoslawful
+  tags:
+    - CentOS
+    - GCC
+  abstract: 在 CentOS 6.x 上安装高版本 GCC
 - id: null-modem-auto-conf
   title: WinXP 网线直连环境的一种自动配置方法
   postedOn: !!str 2015-07-21
