@@ -4,8 +4,27 @@
         <title>混沌猫的窝</title>
         <link>http://chaoslawful.github.io</link>
         <description>混沌猫的窝</description>
-        <lastBuildDate>Thu, 01 Nov 2018 13:29:24 +0800</lastBuildDate>
+        <lastBuildDate>Thu, 01 Nov 2018 13:30:46 +0800</lastBuildDate>
         <language>zh-cn</language>
+        
+        <item>
+            <title>Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</title>
+            <link>http://chaoslawful.github.io/articles/ubuntu-18.04-cuda-memory.html?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=rss</link>
+            <guid>http://chaoslawful.github.io/articles/ubuntu-18.04-cuda-memory.html</guid>
+            <author>chaoslawful@gmail.com 王晓哲</author>
+            <pubDate>Thu, 01 Nov 2018 00:00:00 +0800</pubDate>
+            <description>&lt;h2 id=&quot;ubuntu-1804-lts-中让桌面系统不占用-n-卡显存的方法&quot;&gt;Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法&lt;/h2&gt;
+&lt;h3 id=&quot;背景&quot;&gt;背景&lt;/h3&gt;
+&lt;p&gt;使用自己电脑的 N 卡进行 CUDA 加速时都希望能使用全部显存，但在 Ubuntu 18.04 LTS 中安装官方专有驱动后，如果用 nvidia-settings 将 PRIME profiles 设为 Nvidia，会让包括 X 桌面在内的所有图形加速功能都走 N 卡，会占用不少显存。若将 PRIME profiles 改为 Intel，N 卡驱动又不会被加载，无法使用 CUDA 加速。&lt;/p&gt;
+&lt;h3 id=&quot;解决方法&quot;&gt;解决方法&lt;/h3&gt;
+&lt;p&gt;PRIME profiles 是通过 &lt;code&gt;/usr/bin/prime-select&lt;/code&gt; 命令完成切换的，PRIME profiles 设为 Intel 时该命令会生成一个驱动黑名单 &lt;code&gt;/lib/modprobe.d/blacklist-nvidia.conf&lt;/code&gt;，修改该文件内容将如下几行注释掉：&lt;/p&gt;
+&lt;pre&gt;blacklist nvidia
+blacklist nvidia-modeset
+alias nvidia off
+alias nvidia-modeset off
+&lt;/pre&gt;&lt;p&gt;logout 后重新 login 即可实现 X 桌面系统图形加速走集成显卡且 N 卡驱动正常加载的效果，可使用全部显存进行 CUDA 计算。&lt;/p&gt;
+</description>
+        </item>
         
         <item>
             <title>CentOS 6.x 上安装 GCC 4.9.x 的方法</title>
@@ -56,25 +75,6 @@ $
 &lt;li&gt;&lt;a href=&quot;https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx&quot;&gt;https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol&quot;&gt;https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-</description>
-        </item>
-        
-        <item>
-            <title>Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</title>
-            <link>http://chaoslawful.github.io/articles/ubuntu-18.04-cuda-memory.html?utm_source=rss&amp;utm_medium=rss&amp;utm_campaign=rss</link>
-            <guid>http://chaoslawful.github.io/articles/ubuntu-18.04-cuda-memory.html</guid>
-            <author>chaoslawful@gmail.com 王晓哲</author>
-            <pubDate>Thu, 01 Nov 2018 00:00:00 +0800</pubDate>
-            <description>&lt;h2 id=&quot;ubuntu-1804-lts-中让桌面系统不占用-n-卡显存的方法&quot;&gt;Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法&lt;/h2&gt;
-&lt;h3 id=&quot;背景&quot;&gt;背景&lt;/h3&gt;
-&lt;p&gt;使用自己电脑的 N 卡进行 CUDA 加速时都希望能使用全部显存，但在 Ubuntu 18.04 LTS 中安装官方专有驱动后，如果用 nvidia-settings 将 PRIME profiles 设为 Nvidia，会让包括 X 桌面在内的所有图形加速功能都走 N 卡，会占用不少显存。若将 PRIME profiles 改为 Intel，N 卡驱动又不会被加载，无法使用 CUDA 加速。&lt;/p&gt;
-&lt;h3 id=&quot;解决方法&quot;&gt;解决方法&lt;/h3&gt;
-&lt;p&gt;PRIME profiles 是通过 &lt;code&gt;/usr/bin/prime-select&lt;/code&gt; 命令完成切换的，PRIME profiles 设为 Intel 时该命令会生成一个驱动黑名单 &lt;code&gt;/lib/modprobe.d/blacklist-nvidia.conf&lt;/code&gt;，修改该文件内容将如下几行注释掉：&lt;/p&gt;
-&lt;pre&gt;blacklist nvidia
-blacklist nvidia-modeset
-alias nvidia off
-alias nvidia-modeset off
-&lt;/pre&gt;&lt;p&gt;logout 后重新 login 即可实现 X 桌面系统图形加速走集成显卡且 N 卡驱动正常加载的效果，可使用全部显存进行 CUDA 计算。&lt;/p&gt;
 </description>
         </item>
         
