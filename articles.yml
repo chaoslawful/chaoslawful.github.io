@@ -15,4 +15,13 @@
     - XP
     - Network
   abstract: 基于 ARP/DHCP 监听的网线直连环境自动配置方案
+- id: ubuntu-18.04-cuda-memory
+  title: Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法
+  postedOn: !!str 2018-11-01
+  author: chaoslawful
+  tags:
+    - Ubuntu
+    - CUDA
+    - NVIDIA
+  abstract: Ubuntu 18.04 LTS 中使用全部 N 卡显存进行计算
 
