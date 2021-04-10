@@ -4,14 +4,21 @@
   <meta charset="utf-8">
   
   
-  <title>标签: linux | 混沌猫的窝</title>
+  <title>CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云） | 混沌猫的窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="混沌猫的窝">
-<meta property="og:url" content="https://chaoslawful.info/tags/linux/index.html">
+  <meta name="description" content="最近帮同事检查一个 Apache 的问题，现象如下：  原本配置了多个 VirtualHost ，DocumentRoot 指向 &#x2F;var&#x2F;www&#x2F; 下不同的子目录，都能正常工作 新加了一个 VirtualHost ，将 DocumentRoot 指向 &#x2F;home&#x2F;aa&#x2F; ，重启 Apache 后无法访问该 VirtualHost 下的内容，提示 403 Forbidden ，而此时访问原先的几个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CentOS&#x2F;RHEL 上 Apache 一个诡异问题的解决（都是浮云）">
+<meta property="og:url" content="https://chaoslawful.info/2009/12/25/centos-apache-selinux/index.html">
 <meta property="og:site_name" content="混沌猫的窝">
+<meta property="og:description" content="最近帮同事检查一个 Apache 的问题，现象如下：  原本配置了多个 VirtualHost ，DocumentRoot 指向 &#x2F;var&#x2F;www&#x2F; 下不同的子目录，都能正常工作 新加了一个 VirtualHost ，将 DocumentRoot 指向 &#x2F;home&#x2F;aa&#x2F; ，重启 Apache 后无法访问该 VirtualHost 下的内容，提示 403 Forbidden ，而此时访问原先的几个">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2009-12-25T07:27:00.000Z">
+<meta property="article:modified_time" content="2021-04-09T06:22:19.680Z">
 <meta property="article:author" content="chaoslawful">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="apache">
+<meta property="article:tag" content="selinux">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="混沌猫的窝" type="application/atom+xml">
@@ -71,107 +78,102 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2021" class="archive-year">2021</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/04/08/null-modem-auto-conf/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-04-08T06:21:05.000Z" itemprop="datePublished">4月 8</time>
+        <section id="main"><article id="post-centos-apache-selinux" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/12/25/centos-apache-selinux/" class="article-date">
+  <time class="dt-published" datetime="2009-12-25T07:27:00.000Z" itemprop="datePublished">2009-12-25</time>
 </a>
-      
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/08/null-modem-auto-conf/">自动配置网线直连数据传输方案</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/04/08/ubuntu-18-04-cuda-memory/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-04-08T06:18:54.000Z" itemprop="datePublished">4月 8</time>
-</a>
+    <div class="e-content article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/08/ubuntu-18-04-cuda-memory/">Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</a>
-    </h1>
-  
+        <p>最近帮同事检查一个 Apache 的问题，现象如下：</p>
+<ul>
+<li>原本配置了多个 <code>VirtualHost</code> ，<code>DocumentRoot</code> 指向 <code>/var/www/</code> 下不同的子目录，都能正常工作</li>
+<li>新加了一个 <code>VirtualHost</code> ，将 <code>DocumentRoot</code> 指向 <code>/home/aa/</code> ，重启 Apache 后无法访问该 <code>VirtualHost</code> 下的内容，提示 <code>403 Forbidden</code> ，而此时访问原先的几个 <code>VirtualHost</code> 还是没有问题</li>
+<li>Apache 错误日志里没有什么奇怪的输出</li>
+<li>操作系统 <strong>CentOS 4.x</strong></li>
+</ul>
+<p>首先考虑是不是新加的 <code>VirtualHost</code> 配置有误导致文件路径映射错误，所以用 <code>strace</code> 跟了一下 Apache 看它在哪个阶段出问题的，发现 Apache 去访问的文件路径在 <code>/home/aa/</code> 下，该文件也确实存在，从 <code>/home/aa/</code> 直到该文件的各级目录都有 <code>a+rx</code> 权限， Apache 应该能直接访问。诡异的是， Apache 进程调用的 <code>lstat64</code> 系统调用对 <code>/home</code> 、 <code>/home/aa</code> 进行权限检查时都是 OK，但对 <code>/home/aa</code> 下的目标文件进行权限检查时却是 <code>EACCESS</code> ，让人百思不解。</p>
+<p>后来才发现原来该系统上未关闭 SELinux 子系统，而 SELinux 默认会对 Apache 进程 httpd 进行若干保护，其中一种就是只允许 httpd 访问特定路径下的文件，系统默认的 <code>/var/www</code> 在允许之列，而其他目录都是禁止访问的。解决办法有二：</p>
+<ul>
+<li>临时关闭 SELinux 对 httpd 的保护：
+<ol>
+<li><code>setsebool -P httpd_disable_trans 1</code></li>
+<li>重启 Apache</li>
+</ol>
+</li>
+<li>永久关闭 SELinux 子系统：
+<ol>
+<li>修改 <code>/etc/sysconfig/selinux</code> ，将其中的 <code>SELINUX=...</code> 改为 <code>SELINUX=disabled</code></li>
+<li>重启操作系统</li>
+</ol>
+</li>
+</ul>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/" class="archive-article-date">
-  <time class="dt-published" datetime="2021-04-08T06:16:20.000Z" itemprop="datePublished">4月 8</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/">在 CentOS 6.x 下使用 gcc 4.9.x 的方法</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <!-- XXX: modified by wxz -->
+      <!--
+      <a data-url="https://chaoslawful.info/2009/12/25/centos-apache-selinux/" data-id="ckn9x4xtd0005iwrccqno8c69" data-title="CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）" class="article-share-link">分享</a>
+      -->
+      <div id="social-share" class="article-social-share"></div>
+      <!-- XXX: ends here -->
+      
+      
+        <a href="/2009/12/25/centos-apache-selinux/#comments" class="article-comment-link">
+          <span class="post-comments-count valine-comment-count" data-xid="/2009/12/25/centos-apache-selinux/" itemprop="commentCount"></span>
+          留言
+        </a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/apache/" rel="tag">apache</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/selinux/" rel="tag">selinux</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
   
     
-    
-      
-        </div></section>
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2009" class="archive-year">2009</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2009/12/25/centos-apache-selinux/" class="archive-article-date">
-  <time class="dt-published" datetime="2009-12-25T07:27:00.000Z" itemprop="datePublished">12月 25</time>
-</a>
-      
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2009/12/25/centos-apache-selinux/">CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）</a>
-    </h1>
+    <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          在 CentOS 6.x 下使用 gcc 4.9.x 的方法
+        
+      </div>
+    </a>
   
+  
+    <a href="/2009/12/09/xen-sysdate/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">在 Xen 虚拟机下修改系统当前时间</div>
+    </a>
+  
+</nav>
 
-    </header>
-  </div>
+  
 </article>
-  
-  
-    </div></section>
-  
 
+
+
+  <section id="comments" class="vcomment">
+
+  </section>
 
 </section>
         

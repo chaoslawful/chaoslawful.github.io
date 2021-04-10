@@ -6,7 +6,7 @@
   <link href="https://chaoslawful.info/atom.xml" rel="self"/>
   
   <link href="https://chaoslawful.info/"/>
-  <updated>2021-04-08T06:24:40.230Z</updated>
+  <updated>2021-04-09T04:13:56.000Z</updated>
   <id>https://chaoslawful.info/</id>
   
   <author>
@@ -17,11 +17,32 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>在 WSL2 环境中使用 Win10 宿主系统中代理的方法</title>
+    <link href="https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/"/>
+    <id>https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/</id>
+    <published>2021-04-08T12:28:51.000Z</published>
+    <updated>2021-04-09T04:13:56.000Z</updated>
+    
+    <content type="html"><![CDATA[<h2 id="背景"><a class="header-anchor" href="#背景"></a>背景</h2><p>Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL2 这样的架构虽然运行效率提高不少，但却无法像 WSL1 那样能直接使用宿主系统提供的代理服务，造成了不少麻烦。</p><h2 id="解决方案"><a class="header-anchor" href="#解决方案"></a>解决方案</h2><p>解决办法很简单，只要允许代理服务为非 <code>localhost</code> 来源地址服务，然后直接使用宿主系统的 IP 地址就能访问到代理了。以 Ubuntu WSL2 环境访问 Shadowsocks 代理为例，步骤如下：</p><ol><li>允许 Shadowsocks 服务非本地来源地址：<br><img src="/images/wsl2-use-win10-proxy/ss-config.png" alt=""></li><li>在 <code>.bashrc</code> 中加入如下的函数方便打开/关闭代理（假设宿主系统 IP 地址为 <code>192.168.175.173</code>，Shadowsocks SOCKS5 代理在 <code>1080</code> 端口）：</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">proxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 设置全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">export</span> ALL_PROXY=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="built_in">export</span> all_proxy=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="comment"># 给 apt-get 增加代理配置</span></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::http::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::https::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">noproxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 清除全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">unset</span> ALL_PROXY</span><br><span class="line">    <span class="built_in">unset</span> all_proxy</span><br><span class="line">    <span class="comment"># 清除 apt-get 代理设置</span></span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::http::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::https::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><p>这样在终端上就可直接用 <code>proxy</code> 开启代理，<code>noproxy</code> 关闭代理。</p><ol><li>对于那些不使用全局代理服务器环境变量的应用，可以安装 <code>proxychains</code> 来实现拦截其网络通信强制走代理的目的：</li></ol><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install proxychains tor</span><br></pre></td></tr></table></figure><p>安装完毕后，向 <code>/etc/proxychains.conf</code> 增加如下配置：</p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[ProxyList]</span></span><br><span class="line">socks5 192.168.175.173 1080</span><br></pre></td></tr></table></figure><p>然后就能用 <code>proxychains &lt;app_path&gt; &lt;cmdline&gt;</code> 的形式强制应用使用代理了。</p><h2 id="参考资料"><a class="header-anchor" href="#参考资料"></a>参考资料</h2><ul><li><a href="https://zhuanlan.zhihu.com/p/144647249">https://zhuanlan.zhihu.com/p/144647249</a></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h2 id=&quot;背景&quot;&gt;&lt;a class=&quot;header-anchor&quot; href=&quot;#背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;
+&lt;p&gt;Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
     <title>自动配置网线直连数据传输方案</title>
     <link href="https://chaoslawful.info/2021/04/08/null-modem-auto-conf/"/>
     <id>https://chaoslawful.info/2021/04/08/null-modem-auto-conf/</id>
     <published>2021-04-08T06:21:05.000Z</published>
-    <updated>2021-04-08T06:24:40.230Z</updated>
+    <updated>2021-04-08T07:28:19.800Z</updated>
     
     <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在很多场景下（手头没有 U 盘、某台电脑 USB 口不可用或没有足够权限安装存储设备驱动等等），我们都需要通过网线直连的方式在两台电脑之间传输数据，这样就要求正确地将两台电脑设置为同一子网下的不同静态 IP。对于电脑知识较为丰富的用户来说此设置过程非常简单，但对于一般用户来说就比较困难了，此时就希望通过程序自动配置好这种网络环境。</p><h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>这里主要针对 Windows XP 系统自动配置进行分析，因 Vista 以上版本系统已经有了 <code>zeroconf</code> 的实现，有现成的解决方案可用。</p><p>网卡地址要么是静态设置，要么是动态 DHCP 分配的。对于静态设置 IP 的情况，拔掉再插上网线后 Windows 系统会监测到媒介状态变化，并自动发送若干源 MAC 为对应网卡 MAC，源/目标 IP 均为当前网卡静态设置 IP 的 ARP 包（称为 Gratuitous ARP 包，用来向子网内其他机器或网关主张自己的静态 IP 所有权），若将网线另一侧机器的 IP 设置为同一子网内的地址，两台机器就能正常通讯了。</p><p><img src="/images/2015-07-21/static-ip-pcap.png" alt="Static IP Capture" title="静态 IP 抓包结果"></p><p>对于动态 DHCP 分配的情况，拔掉再插上网线后 Windows 系统会自动发送 DHCP 相关请求，要求可能存在的 DHCP 服务器分配 IP，若在网线另一侧机器上运行 DHCP 服务，即可自动设置双机 IP 在同一子网中，也能正常通讯。</p><p><img src="/images/2015-07-21/dhcp-ip-pcap.png" alt="DHCP IP Capture" title="动态 DHCP 抓包结果"></p><h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>参考实现程序<a href="https://github.com/chaoslawful/nullconf">在此</a>。该程序使用 <code>pcapy</code> 模块操作 <code>WinPCAP</code> 在指定网卡（Windows 环境下通过 <code>wmi</code> 模块自动获得首个可用的有线网卡）上监听数据包，通过 <code>impacket</code> 模块解析后根据数据包特征决定使用静态还是动态配置逻辑，最后用 OS 相关方法设置本地监听的有线网卡 IP 后（Windows 环境下通过 <code>wmi</code> 模块实现）完成双机 IP 配置。</p><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul><li><a href="http://timgolden.me.uk/python/wmi/tutorial.html">http://timgolden.me.uk/python/wmi/tutorial.html</a></li><li><a href="https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx</a></li><li><a href="https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol">https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol</a></li></ul>]]></content>
     
@@ -45,7 +66,7 @@
     <link href="https://chaoslawful.info/2021/04/08/ubuntu-18-04-cuda-memory/"/>
     <id>https://chaoslawful.info/2021/04/08/ubuntu-18-04-cuda-memory/</id>
     <published>2021-04-08T06:18:54.000Z</published>
-    <updated>2021-04-08T06:19:48.830Z</updated>
+    <updated>2021-04-08T07:28:19.800Z</updated>
     
     <content type="html"><![CDATA[<h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>使用自己电脑的 N 卡进行 CUDA 加速时都希望能使用全部显存，但在 Ubuntu 18.04 LTS 中安装官方专有驱动后，如果用 nvidia-settings 将 PRIME profiles 设为 Nvidia，会让包括 X 桌面在内的所有图形加速功能都走 N 卡，会占用不少显存。若将 PRIME profiles 改为 Intel，N 卡驱动又不会被加载，无法使用 CUDA 加速。</p><h3 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h3><p>PRIME profiles 是通过 <code>/usr/bin/prime-select</code> 命令完成切换的，PRIME profiles 设为 Intel 时该命令会生成一个驱动黑名单 <code>/lib/modprobe.d/blacklist-nvidia.conf</code>，修改该文件内容将如下几行注释掉：</p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">blacklist nvidia</span><br><span class="line">blacklist nvidia-modeset</span><br><span class="line">alias nvidia off</span><br><span class="line">alias nvidia-modeset off</span><br></pre></td></tr></table></figure><p>logout 后重新 login 即可实现 X 桌面系统图形加速走集成显卡且 N 卡驱动正常加载的效果，可使用全部显存进行 CUDA 计算。</p>]]></content>
     
@@ -73,7 +94,7 @@
     <link href="https://chaoslawful.info/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/"/>
     <id>https://chaoslawful.info/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/</id>
     <published>2021-04-08T06:16:20.000Z</published>
-    <updated>2021-04-08T06:16:20.760Z</updated>
+    <updated>2021-04-08T07:28:19.800Z</updated>
     
     <content type="html"><![CDATA[<p>尝试在 CentOS 6.x 下编译使用 PyPy 5.x 时发现其生成的 interpreter.c 使用了 <code>__int128</code> 内置类型，但系统自带的 gcc 4.4.x 并不支持该类型，所以需要按如下步骤装一个 gcc 4.9.x：</p><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install centos-release-scl</span><br><span class="line">$ sudo yum install devtoolset-3-gcc devtoolset-3-binutils devtoolset-3-gcc-c++</span><br><span class="line"><span class="comment"># 用如下 scl 命令在新 gcc 环境中执行命令，这里执行的是 bash</span></span><br><span class="line">$ scl <span class="built_in">enable</span> devtoolset-3 bash</span><br><span class="line"><span class="comment"># 进入了新 gcc 环境的 shell，验证一下 gcc 版本</span></span><br><span class="line">$ gcc --version</span><br><span class="line">gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)</span><br><span class="line">Copyright (C) 2014 Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the <span class="built_in">source</span> <span class="keyword">for</span> copying conditions.  There is NO</span><br><span class="line">warranty; not even <span class="keyword">for</span> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br><span class="line">$</span><br></pre></td></tr></table></figure><h3 id="参考："><a href="#参考：" class="headerlink" title="参考："></a>参考：</h3><ul><li><a href="http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos">http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos</a></li></ul>]]></content>
     
@@ -90,6 +111,110 @@
     <category term="linux" scheme="https://chaoslawful.info/tags/linux/"/>
     
     <category term="gcc" scheme="https://chaoslawful.info/tags/gcc/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）</title>
+    <link href="https://chaoslawful.info/2009/12/25/centos-apache-selinux/"/>
+    <id>https://chaoslawful.info/2009/12/25/centos-apache-selinux/</id>
+    <published>2009-12-25T07:27:00.000Z</published>
+    <updated>2021-04-09T06:22:19.680Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近帮同事检查一个 Apache 的问题，现象如下：</p><ul><li>原本配置了多个 <code>VirtualHost</code> ，<code>DocumentRoot</code> 指向 <code>/var/www/</code> 下不同的子目录，都能正常工作</li><li>新加了一个 <code>VirtualHost</code> ，将 <code>DocumentRoot</code> 指向 <code>/home/aa/</code> ，重启 Apache 后无法访问该 <code>VirtualHost</code> 下的内容，提示 <code>403 Forbidden</code> ，而此时访问原先的几个 <code>VirtualHost</code> 还是没有问题</li><li>Apache 错误日志里没有什么奇怪的输出</li><li>操作系统 <strong>CentOS 4.x</strong></li></ul><p>首先考虑是不是新加的 <code>VirtualHost</code> 配置有误导致文件路径映射错误，所以用 <code>strace</code> 跟了一下 Apache 看它在哪个阶段出问题的，发现 Apache 去访问的文件路径在 <code>/home/aa/</code> 下，该文件也确实存在，从 <code>/home/aa/</code> 直到该文件的各级目录都有 <code>a+rx</code> 权限， Apache 应该能直接访问。诡异的是， Apache 进程调用的 <code>lstat64</code> 系统调用对 <code>/home</code> 、 <code>/home/aa</code> 进行权限检查时都是 OK，但对 <code>/home/aa</code> 下的目标文件进行权限检查时却是 <code>EACCESS</code> ，让人百思不解。</p><p>后来才发现原来该系统上未关闭 SELinux 子系统，而 SELinux 默认会对 Apache 进程 httpd 进行若干保护，其中一种就是只允许 httpd 访问特定路径下的文件，系统默认的 <code>/var/www</code> 在允许之列，而其他目录都是禁止访问的。解决办法有二：</p><ul><li>临时关闭 SELinux 对 httpd 的保护：<ol><li><code>setsebool -P httpd_disable_trans 1</code></li><li>重启 Apache</li></ol></li><li>永久关闭 SELinux 子系统：<ol><li>修改 <code>/etc/sysconfig/selinux</code> ，将其中的 <code>SELINUX=...</code> 改为 <code>SELINUX=disabled</code></li><li>重启操作系统</li></ol></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;最近帮同事检查一个 Apache 的问题，现象如下：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;原本配置了多个 &lt;code&gt;VirtualHost&lt;/code&gt; ，&lt;code&gt;DocumentRoot&lt;/code&gt; 指向 &lt;code&gt;/var/www/&lt;/code&gt; 下不同的子目录，都能正</summary>
+      
+    
+    
+    
+    
+    <category term="linux" scheme="https://chaoslawful.info/tags/linux/"/>
+    
+    <category term="apache" scheme="https://chaoslawful.info/tags/apache/"/>
+    
+    <category term="selinux" scheme="https://chaoslawful.info/tags/selinux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在 Xen 虚拟机下修改系统当前时间</title>
+    <link href="https://chaoslawful.info/2009/12/09/xen-sysdate/"/>
+    <id>https://chaoslawful.info/2009/12/09/xen-sysdate/</id>
+    <published>2009-12-09T09:24:00.000Z</published>
+    <updated>2021-04-09T04:56:43.880Z</updated>
+    
+    <content type="html"><![CDATA[<p>Xen 虚拟机默认不允许不同的虚拟机使用不同的系统时间，因此所有虚拟机的系统时间都会同宿主机的系统时间严格同步，用 <code>date</code> 命令修改虚拟机系统时间时虽然提示成功但其实系统时间还是没变。若有独立修改 Xen 虚拟机的特殊需要，可以通过如下方法进行：</p><ul><li>在 Xen 虚拟机的 root 提示符下输入如下命令之一以启用虚拟机独立的系统时间：  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt; /proc/sys/xen/independent_wallclock</span><br></pre></td></tr></table></figure>或  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl xen.independent_wallclock=1</span><br></pre></td></tr></table></figure></li><li>然后用 <code>date -s &lt;target date&gt;</code> 应该就可以设置系统时间了</li></ul><p>这样的设置在虚拟机重启以后就会失效，若要使该设置永久生效，可以进行如下改动之一：</p><ul><li>修改 <code>/etc/sysctl.conf</code> 文件，增加如下内容：</li></ul><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set independent wall clock time</span></span><br><span class="line">xen.independent_wallclock=1</span><br></pre></td></tr></table></figure><ul><li>在虚拟机启动时的 kernel 命令行中加入选项 <code>independent_wallclock=1</code></li></ul><h2 id="参考资料"><a class="header-anchor" href="#参考资料"></a>参考资料</h2><ul><li><a href="http://docs.vmd.citrix.com/XenServer/4.0.1/guest/ch04s06.html">http://docs.vmd.citrix.com/XenServer/4.0.1/guest/ch04s06.html</a></li></ul>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;Xen 虚拟机默认不允许不同的虚拟机使用不同的系统时间，因此所有虚拟机的系统时间都会同宿主机的系统时间严格同步，用 &lt;code&gt;date&lt;/code&gt; 命令修改虚拟机系统时间时虽然提示成功但其实系统时间还是没变。若有独立修改 Xen 虚拟机的特殊需要，可以通过如下方法进行：</summary>
+      
+    
+    
+    
+    
+    <category term="xen" scheme="https://chaoslawful.info/tags/xen/"/>
+    
+    <category term="virtualization" scheme="https://chaoslawful.info/tags/virtualization/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Accessing EXT2/3 partition under Windows XP</title>
+    <link href="https://chaoslawful.info/2009/11/25/accessing-ext3-under-xp/"/>
+    <id>https://chaoslawful.info/2009/11/25/accessing-ext3-under-xp/</id>
+    <published>2009-11-25T15:37:00.000Z</published>
+    <updated>2021-04-09T04:45:47.420Z</updated>
+    
+    <content type="html"><![CDATA[<p>After some googling I found several ways to do the job:</p><ol><li><a href="http://www.chrysocome.net/explore2fs">Explore2fs</a><ul><li><em>Pros:</em> Open-source; No installing needed</li><li><em>Cons:</em> Read only; Exporting file is too slow…</li></ul></li><li><a href="http://www.fs-driver.org/index.html">Ext2 IFS</a><ul><li><em>Pros:</em> Mount EXT2/3 partition to a real disk letter; High accessing speed</li><li><em>Cons:</em> Installing needed; No source available</li></ul></li><li><a href="http://www.ext2fsd.com/">Ext2Fsd</a><ul><li><em>Pros:</em> Opensource; Mount EXT2/3 partition to a real disk letter</li><li><em>Cons:</em> Installing needed; Complex operations</li></ul></li><li><a href="http://www.diskinternals.com/linux-reader/">Diskinternal Linux Reader</a><ul><li><em>Pros:</em> User-friendly interface with lots of whistles</li><li><em>Cons:</em> Installing needed; No source available; Not support UTF-8 charset</li></ul></li><li><a href="http://www.chrysocome.net/virtualvolumes">Virtual Volumes</a><ul><li><em>Pros:</em> Opensource</li><li><em>Cons:</em> Installing needed; Not completed yet…</li></ul></li></ol><p>Finally I chose Ext2 IFS 😃</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;After some googling I found several ways to do the job:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&quot;http://www.chrysocome.net/explore2fs&quot;&gt;Explore2fs&lt;/a&gt;
+&lt;ul&gt;
+&lt;</summary>
+      
+    
+    
+    
+    
+    <category term="winxp" scheme="https://chaoslawful.info/tags/winxp/"/>
+    
+    <category term="ext3" scheme="https://chaoslawful.info/tags/ext3/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>如何避免 boost::shared_ptr 管理的共享对象被意外删除</title>
+    <link href="https://chaoslawful.info/2009/07/24/boost-shared_ptr/"/>
+    <id>https://chaoslawful.info/2009/07/24/boost-shared_ptr/</id>
+    <published>2009-07-24T12:23:00.000Z</published>
+    <updated>2021-04-09T04:22:22.440Z</updated>
+    
+    <content type="html"><![CDATA[<p><code>boost::shared_ptr</code> （已进入C++ TR1标准）是管理共享对象的好帮手，但由于其 <code>get()</code> 方法能获取原对象裸指针，因此存在其管理的对象被人为意外删除的危险。最近看 boost 相关资料时发现一些方法能避免该问题。</p><h2 id="方案1-使用包装类"><a class="header-anchor" href="#方案1-使用包装类"></a>方案1 - 使用包装类</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">T</span> &#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    ~<span class="built_in">T</span>() &#123;...&#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TWrapper</span> &#123;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">boost::shared_ptr&lt;T&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> TWrapper)</span></span>;</span><br><span class="line"><span class="keyword">delete</span> p.<span class="built_in">get</span>(); <span class="comment">// Oops...Compile-time error!</span></span><br></pre></td></tr></table></figure><p>这是因为 <code>shared_ptr</code> 对象内部指向的共享引用计数对象保存的是原始指针（这里就是 <code>TWrapper*</code> ），引用计数为 0 时可以用该指针正常调用 <code>delete</code> ，而从 <code>get()</code> 方法获得的是 <code>shared_ptr</code> 对象缓存的指针，类型为 <code>T*</code> ，而 <code>class T</code> 的析构函数被保护了，故不能显式被 <code>delete</code> 。该方案缺点是需要引入一个新类，且当原类构造函数有多种形式时，包装类也要对应提供这些形式的构造函数，二者是紧耦合的；优点是创建对象方式同以前没有变化。</p><h2 id="方案2-使用自定义析构函数"><a class="header-anchor" href="#方案2-使用自定义析构函数"></a>方案2 - 使用自定义析构函数</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">T</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">deleter</span> &#123;</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(T *p)</span> </span>&#123; <span class="keyword">delete</span> p; &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">deleter</span>;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="built_in">T</span>() &#123; ... &#125;</span><br><span class="line">    ~<span class="built_in">T</span>() &#123; ... &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> boost::shared_ptr&lt;T&gt; <span class="title">createObject</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> boost::shared_ptr&lt;T&gt;(<span class="keyword">new</span> <span class="built_in">T</span>(), T::<span class="built_in">deleter</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">boost::shared_ptr&lt;T&gt; p = T::<span class="built_in">createObject</span>();</span><br><span class="line"><span class="keyword">delete</span> p.<span class="built_in">get</span>(); <span class="comment">// Oops...Compile-time error!</span></span><br></pre></td></tr></table></figure><p>该方案利用 <code>shared_ptr</code> 的自定义析构函数形式实现，将析构函子类作为私有类封装在 <code>class T</code> 内部，以避免被外部直接利用；创建对象时也不再使用标准 <code>new</code> 形式，而是封装了对应的静态工厂方法，为了避免绕过工厂方法创建对象，还要将 <code>class T</code> 的构造函数也保护起来。该方案的缺点是创建对象方法彻底改变，且工厂方法接口要同原有类构造函数的形式一致；优点是所有的机制都封装在原有类内部，不需要额外引入新类型。</p><p>从 <code>shared_ptr</code> 内部的共享引用计数对象保存原始指针这一特性可知，若创建 <code>shared_ptr</code> 对象时传入的是派生类指针，即使基类没有将析构函数定义为 <code>virtual</code> 的，共享对象被删除时也会正常调用派生类的析构函数：</p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ~<span class="built_in">Base</span>() &#123; cout &lt;&lt; <span class="string">&quot;Base dtor\n&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">virtual</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ~<span class="built_in">Derived</span>() &#123; cout &lt;&lt; <span class="string">&quot;Derived dtor\n&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">boost::shared_ptr&lt;Base&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> Derived)</span></span>;</span><br><span class="line">    <span class="comment">// shared_ptr object release managed-object here, will call dtors of class Derived and Base in order</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Base *q = <span class="keyword">new</span> Derived;</span><br><span class="line"><span class="keyword">delete</span> q; <span class="comment">// Here only dtor of class Base is called for it&#x27;s not declared to be virtual</span></span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;&lt;code&gt;boost::shared_ptr&lt;/code&gt; （已进入C++ TR1标准）是管理共享对象的好帮手，但由于其 &lt;code&gt;get()&lt;/code&gt; 方法能获取原对象裸指针，因此存在其管理的对象被人为意外删除的危险。最近看 boost 相关资料时发现一些方法能避</summary>
+      
+    
+    
+    
+    
+    <category term="boost" scheme="https://chaoslawful.info/tags/boost/"/>
+    
+    <category term="c++" scheme="https://chaoslawful.info/tags/c/"/>
     
   </entry>
   

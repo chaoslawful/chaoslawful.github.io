@@ -4,21 +4,21 @@
   <meta charset="utf-8">
   
   
-  <title>个人介绍 | 混沌猫的窝</title>
+  <title>在 WSL2 环境中使用 Win10 宿主系统中代理的方法 | 混沌猫的窝</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="一只爱好广泛的喵星人">
-<meta property="og:type" content="website">
-<meta property="og:title" content="个人介绍">
-<meta property="og:url" content="https://chaoslawful.info/about/index.html">
+  <meta name="description" content="背景 Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL2 这样的架构虽然运行效率提高不少，但却无法像 WSL1 那样能直接使用宿主系统提供的代理服务，造成了不少麻烦。 解决方案 解决办法很简单，只要允许代理服务为非 localhost 来源地址服务，然后直接使用宿主系统的 IP 地址就能访问到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 WSL2 环境中使用 Win10 宿主系统中代理的方法">
+<meta property="og:url" content="https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/index.html">
 <meta property="og:site_name" content="混沌猫的窝">
-<meta property="og:description" content="一只爱好广泛的喵星人">
+<meta property="og:description" content="背景 Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL2 这样的架构虽然运行效率提高不少，但却无法像 WSL1 那样能直接使用宿主系统提供的代理服务，造成了不少麻烦。 解决方案 解决办法很简单，只要允许代理服务为非 localhost 来源地址服务，然后直接使用宿主系统的 IP 地址就能访问到">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://chaoslawful.info/images/cozy-kitty.jpg">
-<meta property="article:published_time" content="2021-04-08T05:44:29.000Z">
-<meta property="article:modified_time" content="2021-04-08T07:28:19.800Z">
+<meta property="og:image" content="https://chaoslawful.info/images/wsl2-use-win10-proxy/ss-config.png">
+<meta property="article:published_time" content="2021-04-08T12:28:51.000Z">
+<meta property="article:modified_time" content="2021-04-09T04:13:56.000Z">
 <meta property="article:author" content="chaoslawful">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://chaoslawful.info/images/cozy-kitty.jpg">
+<meta name="twitter:image" content="https://chaoslawful.info/images/wsl2-use-win10-proxy/ss-config.png">
   
     <link rel="alternate" href="/atom.xml" title="混沌猫的窝" type="application/atom+xml">
   
@@ -77,10 +77,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="page-" class="h-entry article article-type-page" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-wsl-2-how-to-use-win10-proxy" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/about/index.html" class="article-date">
-  <time class="dt-published" datetime="2021-04-08T05:44:29.000Z" itemprop="datePublished">2021-04-08</time>
+    <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/" class="article-date">
+  <time class="dt-published" datetime="2021-04-08T12:28:51.000Z" itemprop="datePublished">2021-04-08</time>
 </a>
     
   </div>
@@ -91,7 +91,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      个人介绍
+      在 WSL2 环境中使用 Win10 宿主系统中代理的方法
     </h1>
   
 
@@ -99,22 +99,42 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p>一只爱好广泛的喵星人</p>
-<p><img src="/images/cozy-kitty.jpg"></p>
+        <h2 id="背景"><a class="header-anchor" href="#背景"></a>背景</h2>
+<p>Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL2 这样的架构虽然运行效率提高不少，但却无法像 WSL1 那样能直接使用宿主系统提供的代理服务，造成了不少麻烦。</p>
+<h2 id="解决方案"><a class="header-anchor" href="#解决方案"></a>解决方案</h2>
+<p>解决办法很简单，只要允许代理服务为非 <code>localhost</code> 来源地址服务，然后直接使用宿主系统的 IP 地址就能访问到代理了。以 Ubuntu WSL2 环境访问 Shadowsocks 代理为例，步骤如下：</p>
+<ol>
+<li>允许 Shadowsocks 服务非本地来源地址：<br>
+<img src="/images/wsl2-use-win10-proxy/ss-config.png" alt=""></li>
+<li>在 <code>.bashrc</code> 中加入如下的函数方便打开/关闭代理（假设宿主系统 IP 地址为 <code>192.168.175.173</code>，Shadowsocks SOCKS5 代理在 <code>1080</code> 端口）：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">proxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 设置全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">export</span> ALL_PROXY=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="built_in">export</span> all_proxy=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="comment"># 给 apt-get 增加代理配置</span></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::http::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::https::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">noproxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 清除全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">unset</span> ALL_PROXY</span><br><span class="line">    <span class="built_in">unset</span> all_proxy</span><br><span class="line">    <span class="comment"># 清除 apt-get 代理设置</span></span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::http::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::https::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样在终端上就可直接用 <code>proxy</code> 开启代理，<code>noproxy</code> 关闭代理。</p>
+<ol>
+<li>对于那些不使用全局代理服务器环境变量的应用，可以安装 <code>proxychains</code> 来实现拦截其网络通信强制走代理的目的：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install proxychains tor</span><br></pre></td></tr></table></figure>
+<p>安装完毕后，向 <code>/etc/proxychains.conf</code> 增加如下配置：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[ProxyList]</span></span><br><span class="line">socks5 192.168.175.173 1080</span><br></pre></td></tr></table></figure>
+<p>然后就能用 <code>proxychains &lt;app_path&gt; &lt;cmdline&gt;</code> 的形式强制应用使用代理了。</p>
+<h2 id="参考资料"><a class="header-anchor" href="#参考资料"></a>参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144647249">https://zhuanlan.zhihu.com/p/144647249</a></li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
       <!-- XXX: modified by wxz -->
       <!--
-      <a data-url="https://chaoslawful.info/about/index.html" data-id="ckn8vgb2y00002grcdrizdcy3" data-title="个人介绍" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/" data-id="ckn8vgb3600052grc4eunfxt8" data-title="在 WSL2 环境中使用 Win10 宿主系统中代理的方法" class="article-share-link">分享</a>
       -->
       <div id="social-share" class="article-social-share"></div>
       <!-- XXX: ends here -->
       
       
-        <a href="/about/index.html#comments" class="article-comment-link">
-          <span class="post-comments-count valine-comment-count" data-xid="/about/index.html" itemprop="commentCount"></span>
+        <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/#comments" class="article-comment-link">
+          <span class="post-comments-count valine-comment-count" data-xid="/2021/04/08/wsl-2-how-to-use-win10-proxy/" itemprop="commentCount"></span>
           留言
         </a>
       
@@ -123,6 +143,16 @@
   </div>
   
     
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/08/null-modem-auto-conf/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">自动配置网线直连数据传输方案</div>
+    </a>
+  
+</nav>
+
   
 </article>
 
