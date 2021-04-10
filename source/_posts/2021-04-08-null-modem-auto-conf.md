@@ -1,7 +1,9 @@
 ---
 title: 自动配置网线直连数据传输方案
 date: 2021-04-08 14:21:05
-tags: [linux,networking]
+tags:
+    - Linux
+    - Networking
 ---
 
 ## 背景

@@ -114,4 +114,20 @@ deploy:
   repo: https://github.com/chaoslawful/chaoslawful.github.io
   branch: master
 
+# XXX: added by wxz
+# 用 hexo-renderer-markdown-it-plus 代替默认的 hexo-renderer-marked 以支持 emoji 和 tasklist
+markdown_it_plus:
+    highlight: true
+    html: true
+    xhtmlOut: true
+    breaks: false
+    langPrefix:
+    linkify: true
+    typographer: false
+    quotes:
+    plugins:
+        - plugin:
+            name: markdown-it-task-lists
+            enable: true
+# XXX: ends here
 

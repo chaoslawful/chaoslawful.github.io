@@ -1,5 +1,21 @@
 menu:
-    Home: /
-    Archives: /archives/
-    About: /about/
+    首页: /
+    归档: /archives/
+    关于: /about/
+
+copyright: |-
+    本文采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0 CN协议</a> 进行许可，
+    可自由转载引用，但需署名作者并注明文章出处。
+
+valine:
+    enable: true
+    appId: SzHYcdCqOVm6BSmO1E8cm2Pn-gzGzoHsz
+    appKey: SOq6il8djKKhWFMONWalg0wC
+    notify: false
+    verify: true
+    pageSize: 10
+    avatar: mm
+    lang: zh-cn
+    placeholder: '写点儿什么吧'
+    guest_info: nick,mail
 

@@ -1,7 +1,11 @@
 ---
 title: Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法
 date: 2021-04-08 14:18:54
-tags: [linux,ubuntu,cuda,nvidia]
+tags:
+    - Linux
+    - Ubuntu
+    - CUDA
+    - NVIDIA
 ---
 
 ### 背景
