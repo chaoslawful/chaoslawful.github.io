@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- XXX: added by wxz -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+  <!-- XXX: ends here -->
+
+  
+  
+  <title>OpenJDK 中查看 JIT 编译结果的方法 | 混沌猫的窝</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="背景 大家都知道 JVM 有 HotSpot 引擎可以对热代码路径进行有效的 JIT 优化，大幅度提升计算密集代码的性能，但 HotSpot 对自己编写的 Java 代码时进行了哪些 JIT 优化？优化后生成的 native code 长什么样？知道了这些信息之后，才能有的放矢地改进自己的代码。  初步查看 JIT 工作情况 以如下 Java 代码为例： 12345678910111213141">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OpenJDK 中查看 JIT 编译结果的方法">
+<meta property="og:url" content="https://chaoslawful.info/2014/01/16/openjdk-inspect-jit-result/index.html">
+<meta property="og:site_name" content="混沌猫的窝">
+<meta property="og:description" content="背景 大家都知道 JVM 有 HotSpot 引擎可以对热代码路径进行有效的 JIT 优化，大幅度提升计算密集代码的性能，但 HotSpot 对自己编写的 Java 代码时进行了哪些 JIT 优化？优化后生成的 native code 长什么样？知道了这些信息之后，才能有的放矢地改进自己的代码。  初步查看 JIT 工作情况 以如下 Java 代码为例： 12345678910111213141">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-01-16T11:35:00.000Z">
+<meta property="article:modified_time" content="2022-05-04T10:00:49.928Z">
+<meta property="article:author" content="chaoslawful">
+<meta property="article:tag" content="Java">
+<meta property="article:tag" content="JIT">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="混沌猫的窝" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">混沌猫的窝</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives/">归档</a>
+        
+          <a class="main-nav-link" href="/about/">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chaoslawful.info"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-openjdk-inspect-jit-result" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2014/01/16/openjdk-inspect-jit-result/" class="article-date">
+  <time class="dt-published" datetime="2014-01-16T11:35:00.000Z" itemprop="datePublished">2014-01-16</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      OpenJDK 中查看 JIT 编译结果的方法
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
+<p>大家都知道 JVM 有 HotSpot 引擎可以对热代码路径进行有效的 JIT 优化，大幅度提升计算密集代码的性能，但 HotSpot 对自己编写的 Java 代码时进行了哪些 JIT 优化？优化后生成的 native code 长什么样？知道了这些信息之后，才能有的放矢地改进自己的代码。</p>
+<h2 id="初步查看-jit-工作情况"><a class="markdownIt-Anchor" href="#初步查看-jit-工作情况"></a> 初步查看 JIT 工作情况</h2>
+<p>以如下 Java 代码为例：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Accumulator.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Accumulator</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> max = Integer.parseInt(args[<span class="number">0</span>]);</span><br><span class="line">		System.out.println(addAllSqrts(max));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">addAllSqrts</span><span class="params">(<span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">double</span> accum = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max; i++) &#123;</span><br><span class="line">			accum = addSqrt(accum, i);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> accum;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">addSqrt</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a + sqrt(b);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">sqrt</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Math.sqrt(a);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一般情况下，我们只需要知道 JIT 内联函数是否满足自己的期望即可，可以用如下命令行达到这个目的：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac Accumulator.java</span><br><span class="line">java -XX:+PrintCompilation Accumulator 50000</span><br></pre></td></tr></table></figure>
+<p>注意默认情况下一个方法至少要被调用 10k 次以上才可能被 JIT 优化，故这里运行时给出的循环参数也要大于该值，输出结果如下：</p>
+<pre>
+     61    1             Accumulator::addSqrt (7 bytes)
+     62    2             Accumulator::sqrt (6 bytes)
+     67    3 %           Accumulator::addAllSqrts @ 4 (23 bytes)
+...
+</pre>
+<p>各个数据列的含义分别为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left"><strong>列1</strong></th>
+<th style="text-align:left"><strong>列2</strong></th>
+<th style="text-align:left"><strong>列3</strong></th>
+<th style="text-align:left"><strong>列4</strong></th>
+<th style="text-align:left"><strong>列5</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">自 JVM 启动到尝试优化的时间(ms)</td>
+<td style="text-align:left">尝试优化的顺序(从 1 开始)</td>
+<td style="text-align:left">特殊方法标识<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></td>
+<td style="text-align:left">方法全名及生成代码长度</td>
+<td style="text-align:left">若有 &quot;made not entrant&quot; 或 &quot;made zombie&quot; 字样就表明没有进行优化</td>
+</tr>
+</tbody>
+</table>
+<p>用如下命令行可以更多地了解内联优化的实际情况以及优化发生的级别：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintCompilation -XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining -XX:+TieredCompilation Accumulator 50000</span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<pre>
+     50    1       3       java.lang.String::equals (81 bytes)
+     51    2       3       java.lang.Object::<init> (1 bytes)
+     53    3     n 0       java.lang.System::arraycopy (native)   (static)
+     53    4       3       java.lang.String::charAt (29 bytes)
+                              @ 18  java/lang/StringIndexOutOfBoundsException::<init> (not loaded)   not inlineable
+     54    6       3       java.lang.String::hashCode (55 bytes)
+     55    5       3       java.lang.String::indexOf (70 bytes)
+                              @ 66   java.lang.String::indexOfSupplementary (71 bytes)   callee is too large
+     56    7       3       java.lang.String::length (6 bytes)
+     59    8       3       java.lang.Math::min (11 bytes)
+     61    9       3       Accumulator::addSqrt (7 bytes)
+                              @ 2   Accumulator::sqrt (6 bytes)
+                                @ 2   java.lang.Math::sqrt (5 bytes)   intrinsic
+     62   10       3       Accumulator::sqrt (6 bytes)
+                              @ 2   java.lang.Math::sqrt (5 bytes)   intrinsic
+     64   11       4       Accumulator::addSqrt (7 bytes)
+...
+</pre>
+<p>这里新增的第 3 列代表了优化发生的级别（Tier 0~4，其中 Tier 0 为 Interpreter，Tier 1~3 为 client 模式的优化策略，Tier 4 为 server 模式的优化策略）</p>
+<h2 id="查看-jit-生成的汇编代码"><a class="markdownIt-Anchor" href="#查看-jit-生成的汇编代码"></a> 查看 JIT 生成的汇编代码</h2>
+<p>为了更好地了解 JIT 优化效果，查看生成的 native code 是很有必要的，不过 OpenJDK 并没有自带反汇编插件 <code>hsdis-*.so</code> ，需要手工安装一下该插件。一般来说有这样几种安装方法：</p>
+<ol>
+<li>对于 Ubuntu 系的发行版，可以直接用命令 <code>sudo apt-get install libopenjdk-hsdis</code> 安装该插件</li>
+<li>用别人从 OpenJDK 中扣出来的代码自行编译安装，具体见 <a target="_blank" rel="noopener" href="https://github.com/drazzib/openjdk-hsdis">这里</a></li>
+<li>按照 <a target="_blank" rel="noopener" href="https://wikis.oracle.com/display/HotSpotInternals/PrintAssembly">HotSpotInternals - PrintAssembly</a> 中的描述自己从 OpenJDK 源码树中编译</li>
+</ol>
+<p>安装完成后，即可用一下命令输出所有 JIT 后函数的 native code 汇编代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly Accumulator 50000</span><br></pre></td></tr></table></figure>
+<p>输出结果如下：</p>
+<pre>
+Java HotSpot(TM) 64-Bit Server VM warning: PrintAssembly is enabled; turning on DebugNonSafepoints to gain additional output
+Loaded disassembler from hsdis-amd64.so
+Decoding compiled method 0x00007ffd9905ee50:
+Code:
+[Disassembling for mach='i386:x86-64']
+[Entry Point]
+[Verified Entry Point]
+[Constants]
+  # {method} 'addSqrt' '(DI)D' in 'Accumulator'
+  # parm0:    xmm0:xmm0   = double
+  # parm1:    rsi       = int
+  #           [sp+0x20]  (sp of caller)
+  0x00007ffd9905ef80: sub    $0x18,%rsp
+  0x00007ffd9905ef87: mov    %rbp,0x10(%rsp)    ;*synchronization entry
+                                                ; - Accumulator::addSqrt@-1 (line 16)
+  0x00007ffd9905ef8c: vcvtsi2sd %esi,%xmm1,%xmm1
+  0x00007ffd9905ef90: vsqrtsd %xmm1,%xmm1,%xmm1
+  0x00007ffd9905ef94: vaddsd %xmm1,%xmm0,%xmm0  ;*dadd
+                                                ; - Accumulator::addSqrt@5 (line 16)
+  0x00007ffd9905ef98: add    $0x10,%rsp
+  0x00007ffd9905ef9c: pop    %rbp
+  0x00007ffd9905ef9d: test   %eax,0xc5f905d(%rip)        # 0x00007ffda5658000
+                                                ;   {poll_return}
+  0x00007ffd9905efa3: retq
+  0x00007ffd9905efa4: hlt
+  0x00007ffd9905efa5: hlt
+...
+</pre>
+<p>还可以增加选项 <code>-XX:PrintAssemblyOptions=hsdis-print-bytes</code> 额外输出指令实际字节序列：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -XX:PrintAssemblyOptions=hsdis-print-bytes Accumulator 50000</span><br></pre></td></tr></table></figure>
+<p>输出结果为：</p>
+<pre>
+Java HotSpot(TM) 64-Bit Server VM warning: PrintAssembly is enabled; turning on DebugNonSafepoints to gain additional output
+Loaded disassembler from hsdis-amd64.so
+Decoding compiled method 0x00007f482105ee50:
+Code:
+[Disassembling for mach='i386:x86-64']
+[Entry Point]
+[Verified Entry Point]
+[Constants]
+  # {method} 'sqrt' '(I)D' in 'Accumulator'
+  # parm0:    rsi       = int
+  #           [sp+0x20]  (sp of caller)
+  0x00007f482105ef80: sub    $0x18,%rsp         ;...4881ec18 000000
+  0x00007f482105ef87: mov    %rbp,0x10(%rsp)    ;...48896c24 10
+                                                ;*synchronization entry
+                                                ; - Accumulator::sqrt@-1 (line 20)
+  0x00007f482105ef8c: vcvtsi2sd %esi,%xmm0,%xmm0  ;...c5fb2ac6
+  0x00007f482105ef90: vsqrtsd %xmm0,%xmm0,%xmm0  ;...c5fb51c0
+                                                ;*invokestatic sqrt
+                                                ; - Accumulator::sqrt@2 (line 20)
+  0x00007f482105ef94: add    $0x10,%rsp         ;...4883c410
+  0x00007f482105ef98: pop    %rbp               ;...5d
+  0x00007f482105ef99: test   %eax,0xc048061(%rip)        # 0x00007f482d0a7000
+                                                ;...85056180 040c
+                                                ;   {poll_return}
+  0x00007f482105ef9f: retq                      ;...c3
+[Exception Handler]
+[Stub Code]
+  0x00007f482105efa0: jmpq   0x00007f482105eda0  ;...e9fbfdff ff
+                                                ;   {no_reloc}
+[Deopt Handler Code]
+  0x00007f482105efa5: callq  0x00007f482105efaa  ;...e8000000 00
+  0x00007f482105efaa: subq   $0x5,(%rsp)        ;...48832c24 05
+  0x00007f482105efaf: jmpq   0x00007f4821038f00  ;...e94c9ffd ff
+                                                ;   {runtime_call}
+  0x00007f482105efb4: hlt                       ;...f4
+...
+</pre>
+<p>上述命令总是输出所有方法的 JIT 结果，当结果很多时难以看出重点，可以将 <code>-XX:+PrintAssembly</code> 选项改为 <code>-XX:CompileCommand=print,*class.method</code> 来限制输出哪些方法，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=<span class="string">&#x27;print,*Accumulator.sqrt&#x27;</span> Accumulator 50000</span><br></pre></td></tr></table></figure>
+<p>这样输出结果就变得很少了：</p>
+<pre>
+CompilerOracle: print *Accumulator.sqrt
+Java HotSpot(TM) 64-Bit Server VM warning: printing of assembly code is enabled; turning on DebugNonSafepoints to gain additional output
+Compiled method (c2)      62    2             Accumulator::sqrt (6 bytes)
+ total in heap  [0x00007fcacc1d18d0,0x00007fcacc1d1a98] = 456
+ relocation     [0x00007fcacc1d19f0,0x00007fcacc1d19f8] = 8
+ main code      [0x00007fcacc1d1a00,0x00007fcacc1d1a20] = 32
+ stub code      [0x00007fcacc1d1a20,0x00007fcacc1d1a38] = 24
+ oops           [0x00007fcacc1d1a38,0x00007fcacc1d1a40] = 8
+ scopes data    [0x00007fcacc1d1a40,0x00007fcacc1d1a50] = 16
+ scopes pcs     [0x00007fcacc1d1a50,0x00007fcacc1d1a90] = 64
+ dependencies   [0x00007fcacc1d1a90,0x00007fcacc1d1a98] = 8
+Loaded disassembler from hsdis-amd64.so
+Decoding compiled method 0x00007fcacc1d18d0:
+Code:
+[Disassembling for mach='i386:x86-64']
+[Entry Point]
+[Verified Entry Point]
+[Constants]
+  # {method} 'sqrt' '(I)D' in 'Accumulator'
+  # parm0:    rsi       = int
+  #           [sp+0x20]  (sp of caller)
+  0x00007fcacc1d1a00: sub    $0x18,%rsp
+  0x00007fcacc1d1a07: mov    %rbp,0x10(%rsp)    ;*synchronization entry
+                                                ; - Accumulator::sqrt@-1 (line 20)
+  0x00007fcacc1d1a0c: vcvtsi2sd %esi,%xmm0,%xmm0
+  0x00007fcacc1d1a10: vsqrtsd %xmm0,%xmm0,%xmm0  ;*invokestatic sqrt
+                                                ; - Accumulator::sqrt@2 (line 20)
+  0x00007fcacc1d1a14: add    $0x10,%rsp
+  0x00007fcacc1d1a18: pop    %rbp
+  0x00007fcacc1d1a19: test   %eax,0x9ea55e1(%rip)        # 0x00007fcad6077000
+                                                ;   {poll_return}
+  0x00007fcacc1d1a1f: retq
+[Exception Handler]
+[Stub Code]
+  0x00007fcacc1d1a20: jmpq   0x00007fcacc1ceda0  ;   {no_reloc}
+[Deopt Handler Code]
+  0x00007fcacc1d1a25: callq  0x00007fcacc1d1a2a
+  0x00007fcacc1d1a2a: subq   $0x5,(%rsp)
+  0x00007fcacc1d1a2f: jmpq   0x00007fcacc1a8f00  ;   {runtime_call}
+  0x00007fcacc1d1a34: hlt
+  0x00007fcacc1d1a35: hlt
+  0x00007fcacc1d1a36: hlt
+  0x00007fcacc1d1a37: hlt
+OopMapSet contains 0 OopMaps
+</pre>
+<p><strong>Tips：</strong> 用如下命令能看到 JVM 支持的所有内部选项及其当前值，可以用于排查环境问题或进行细节调整：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+AggressiveOpts -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -XX:+PrintFlagsFinal -version</span><br></pre></td></tr></table></figure>
+<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://www.slideshare.net/CharlesNutter/javaone-2012-jvm-jit-for-dummies">JVM JIT for Dummies</a></li>
+<li><a target="_blank" rel="noopener" href="https://wikis.oracle.com/display/HotSpotInternals/PrintAssembly">HotSpotInternals - PrintAssembly</a></li>
+<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/9341083/how-to-use-xxunlockdiagnosticvmoptions-xxcompilecommand-print-option-with-j">How to use -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print option with JVM HotSpot</a></li>
+</ul>
+<hr class="footnotes-sep" />
+<section class="footnotes">
+<ol class="footnotes-list">
+<li id="fn1" class="footnote-item"><p><code>!</code> 表示是异常处理函数， <code>n</code> 表示是 native 函数， <code>%</code> 表示进行了 OSR（On-Stack Replace） 优化 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
+</li>
+</ol>
+</section>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2014/01/16/openjdk-inspect-jit-result/" data-id="cl2rftlg2001f8src02ogciro" data-title="OpenJDK 中查看 JIT 编译结果的方法" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2014/03/10/ipython-notebook-latex-chinese-solution/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          IPython Notebook 转成 LaTeX 时的中文问题解决方案
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2013/10/09/ubuntu-adb-connect-tooky-t85/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">在 Ubuntu 下用 adb 连接京崎 Tooky T85 手机</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ANTLR/" rel="tag">ANTLR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Alienware/" rel="tag">Alienware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eclipse/" rel="tag">Eclipse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/" rel="tag">Emacs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/" rel="tag">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GNUCash/" rel="tag">GNUCash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lombok/" rel="tag">Lombok</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDR/" rel="tag">SDR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/etymology/" rel="tag">etymology</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hack/" rel="tag">hack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org-mode/" rel="tag">org-mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org2blog/" rel="tag">org2blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/patch/" rel="tag">patch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resource/" rel="tag">resource</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpm/" rel="tag">rpm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/utrace/" rel="tag">utrace</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ANTLR/" style="font-size: 10px;">ANTLR</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/Alienware/" style="font-size: 10px;">Alienware</a> <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Apache/" style="font-size: 10px;">Apache</a> <a href="/tags/Boost/" style="font-size: 10px;">Boost</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Eclipse/" style="font-size: 10px;">Eclipse</a> <a href="/tags/Emacs/" style="font-size: 12.5px;">Emacs</a> <a href="/tags/Erlang/" style="font-size: 10px;">Erlang</a> <a href="/tags/Ext3/" style="font-size: 10px;">Ext3</a> <a href="/tags/GCC/" style="font-size: 12.5px;">GCC</a> <a href="/tags/GNUCash/" style="font-size: 12.5px;">GNUCash</a> <a href="/tags/Hyper-V/" style="font-size: 10px;">Hyper-V</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/JIT/" style="font-size: 10px;">JIT</a> <a href="/tags/Java/" style="font-size: 17.5px;">Java</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Lombok/" style="font-size: 10px;">Lombok</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/SDR/" style="font-size: 10px;">SDR</a> <a href="/tags/SELinux/" style="font-size: 10px;">SELinux</a> <a href="/tags/Tooky/" style="font-size: 10px;">Tooky</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Virtualization/" style="font-size: 12.5px;">Virtualization</a> <a href="/tags/WSL/" style="font-size: 12.5px;">WSL</a> <a href="/tags/Win10/" style="font-size: 12.5px;">Win10</a> <a href="/tags/WinXP/" style="font-size: 10px;">WinXP</a> <a href="/tags/XEN/" style="font-size: 10px;">XEN</a> <a href="/tags/deb/" style="font-size: 10px;">deb</a> <a href="/tags/etymology/" style="font-size: 10px;">etymology</a> <a href="/tags/hack/" style="font-size: 12.5px;">hack</a> <a href="/tags/i18n/" style="font-size: 10px;">i18n</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/org-mode/" style="font-size: 10px;">org-mode</a> <a href="/tags/org2blog/" style="font-size: 12.5px;">org2blog</a> <a href="/tags/patch/" style="font-size: 10px;">patch</a> <a href="/tags/regexp/" style="font-size: 10px;">regexp</a> <a href="/tags/resource/" style="font-size: 10px;">resource</a> <a href="/tags/rpm/" style="font-size: 10px;">rpm</a> <a href="/tags/utrace/" style="font-size: 10px;">utrace</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">十月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/03/">三月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/02/">二月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">一月 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">十二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/08/">八月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/02/">二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/01/">一月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">十二月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/11/">十一月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/07/">七月 2009</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/04/10/win10-home-hyperv-install/">Win10 家庭版上安装 Hyper-V 的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/">在 WSL2 环境中使用 Win10 宿主系统中代理的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/null-modem-auto-conf/">自动配置网线直连数据传输方案</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/ubuntu-18-04-cuda-memory/">Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/">在 CentOS 6.x 下使用 gcc 4.9.x 的方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        本文采用 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0 CN协议</a> 进行许可，
+可自由转载引用，但需署名作者并注明文章出处。
+      
+      &copy; 2022 chaoslawful<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives/" class="mobile-nav-link">归档</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

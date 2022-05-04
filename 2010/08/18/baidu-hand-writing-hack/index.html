@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- XXX: added by wxz -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+  <!-- XXX: ends here -->
+
+  
+  
+  <title>Baidu 首页手写输入法交互数据格式分析 | 混沌猫的窝</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="手写识别接口以 HTTP POST 方式访问 http:&#x2F;&#x2F;hw.baidu.com ， Content-Type 为 application&#x2F;x-www-form-urlencoded ，POST body 中包含如下 2 个参数：  type - 总是为 1； wd - 为手写笔划矢量数据，格式如下：  每条矢量笔划数据都是形如 x1,y1,x2,y2,... 的坐标列表，其中 x 和 y 坐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Baidu 首页手写输入法交互数据格式分析">
+<meta property="og:url" content="https://chaoslawful.info/2010/08/18/baidu-hand-writing-hack/index.html">
+<meta property="og:site_name" content="混沌猫的窝">
+<meta property="og:description" content="手写识别接口以 HTTP POST 方式访问 http:&#x2F;&#x2F;hw.baidu.com ， Content-Type 为 application&#x2F;x-www-form-urlencoded ，POST body 中包含如下 2 个参数：  type - 总是为 1； wd - 为手写笔划矢量数据，格式如下：  每条矢量笔划数据都是形如 x1,y1,x2,y2,... 的坐标列表，其中 x 和 y 坐">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2010-08-18T14:38:00.000Z">
+<meta property="article:modified_time" content="2022-05-04T10:00:49.928Z">
+<meta property="article:author" content="chaoslawful">
+<meta property="article:tag" content="hack">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="混沌猫的窝" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">混沌猫的窝</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives/">归档</a>
+        
+          <a class="main-nav-link" href="/about/">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chaoslawful.info"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-baidu-hand-writing-hack" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2010/08/18/baidu-hand-writing-hack/" class="article-date">
+  <time class="dt-published" datetime="2010-08-18T14:38:00.000Z" itemprop="datePublished">2010-08-18</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Baidu 首页手写输入法交互数据格式分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>手写识别接口以 HTTP POST 方式访问 <a target="_blank" rel="noopener" href="http://hw.baidu.com">http://hw.baidu.com</a> ， <code>Content-Type</code> 为 <code>application/x-www-form-urlencoded</code> ，POST body 中包含如下 2 个参数：</p>
+<ul>
+<li><strong>type</strong> - 总是为 1；</li>
+<li><strong>wd</strong> - 为手写笔划矢量数据，格式如下：
+<ul>
+<li>每条矢量笔划数据都是形如 <code>x1,y1,x2,y2,...</code> 的坐标列表，其中 x 和 y 坐标的有效值范围在 4~209 之间（屏幕坐标系，左上角为原点，向右向下坐标递增），以字符 &quot;a&quot; 作为分隔符将 10 进制坐标数值序列化为字符串。例如一个笔划经过的坐标若为 <code>(15,15)-(15,30)</code> ，则该笔划序列化后的字符串为 &quot;<code>15a15a15a30</code>&quot; ；而另一条笔划经过的坐标若为 <code>(15,30)-(30,30)</code> ，则序列化后的字符串为&quot;<code>15a30a30a30</code>&quot;；</li>
+<li>多条矢量笔划数据字符串之间以 &quot;aa&quot; 分隔后作为最终数据串，例如上述 2 条笔划组成的最终数据串为 &quot;<code>15a15a15a30aa15a30a30a30</code>&quot;</li>
+</ul>
+</li>
+</ul>
+<p>对应上述笔划数据的完整手写识别请求为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">http://hw.baidu.com</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Content-type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">Content-length</span><span class="punctuation">: </span>34</span><br><span class="line"></span><br><span class="line">wd=15a15a15a30aa15a30a30a30&amp;type=1</span><br></pre></td></tr></table></figure>
+<p>响应体为 JSON 对象，包含如下 2 个字段：</p>
+<ul>
+<li><strong>t</strong> - 总是为 1；</li>
+<li><strong>s</strong> - 为候选字列表字符串，其中包含 10 个候选字，以 Unicode 转义序列表示</li>
+</ul>
+<p>对应上述手写识别请求的响应为：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">HTTP/1.1</span> <span class="number">200</span> OK</span><br><span class="line"><span class="attribute">Date</span><span class="punctuation">: </span>Wed, 18 Aug 2010 14:39:09 GMT</span><br><span class="line"><span class="attribute">Server</span><span class="punctuation">: </span>hw.baidu.com</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>74</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>text/html;charset=gb2312</span><br><span class="line"><span class="attribute">Cache-Control</span><span class="punctuation">: </span>private</span><br><span class="line"><span class="attribute">Expires</span><span class="punctuation">: </span>Wed, 18 Aug 2010 15:39:09 GMT</span><br><span class="line"><span class="attribute">Connection</span><span class="punctuation">: </span>Keep-Alive</span><br><span class="line"></span><br><span class="line">&#123;&quot;s&quot;:&quot;\u004c\u4e5a\u0063\u0043\u5315\u4e04\u4e0a\u006c\u535c\u4e00&quot;,&quot;t&quot;:1&#125;</span><br></pre></td></tr></table></figure>
+<p>经过简单的解码即可知候选字列表为 &quot;L乚cC匕丄上l卜一&quot;。</p>
+<p>对此接口进行一些简单的包装即可实现各种在线手写识别应用，不过有没有可能用这个做 OCR？有兴趣的同学可以尝试尝试 😃</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2010/08/18/baidu-hand-writing-hack/" data-id="cl2rftlfk000h8srcdel95lh5" data-title="Baidu 首页手写输入法交互数据格式分析" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/hack/" rel="tag">hack</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2010/12/25/intel-software-download/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">前一篇</strong>
+      <div class="article-nav-title">
+        
+          Intel Non-Commercial Software Download
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2010/02/05/rpm-package-already-exists/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">后一篇</strong>
+      <div class="article-nav-title">RPM 打包时报告 Package already exists: %package ... 错误的可能原因</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ANTLR/" rel="tag">ANTLR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Alienware/" rel="tag">Alienware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eclipse/" rel="tag">Eclipse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/" rel="tag">Emacs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/" rel="tag">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GNUCash/" rel="tag">GNUCash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lombok/" rel="tag">Lombok</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDR/" rel="tag">SDR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/etymology/" rel="tag">etymology</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hack/" rel="tag">hack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org-mode/" rel="tag">org-mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org2blog/" rel="tag">org2blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/patch/" rel="tag">patch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resource/" rel="tag">resource</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpm/" rel="tag">rpm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/utrace/" rel="tag">utrace</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ANTLR/" style="font-size: 10px;">ANTLR</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/Alienware/" style="font-size: 10px;">Alienware</a> <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Apache/" style="font-size: 10px;">Apache</a> <a href="/tags/Boost/" style="font-size: 10px;">Boost</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Eclipse/" style="font-size: 10px;">Eclipse</a> <a href="/tags/Emacs/" style="font-size: 12.5px;">Emacs</a> <a href="/tags/Erlang/" style="font-size: 10px;">Erlang</a> <a href="/tags/Ext3/" style="font-size: 10px;">Ext3</a> <a href="/tags/GCC/" style="font-size: 12.5px;">GCC</a> <a href="/tags/GNUCash/" style="font-size: 12.5px;">GNUCash</a> <a href="/tags/Hyper-V/" style="font-size: 10px;">Hyper-V</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/JIT/" style="font-size: 10px;">JIT</a> <a href="/tags/Java/" style="font-size: 17.5px;">Java</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Lombok/" style="font-size: 10px;">Lombok</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/SDR/" style="font-size: 10px;">SDR</a> <a href="/tags/SELinux/" style="font-size: 10px;">SELinux</a> <a href="/tags/Tooky/" style="font-size: 10px;">Tooky</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Virtualization/" style="font-size: 12.5px;">Virtualization</a> <a href="/tags/WSL/" style="font-size: 12.5px;">WSL</a> <a href="/tags/Win10/" style="font-size: 12.5px;">Win10</a> <a href="/tags/WinXP/" style="font-size: 10px;">WinXP</a> <a href="/tags/XEN/" style="font-size: 10px;">XEN</a> <a href="/tags/deb/" style="font-size: 10px;">deb</a> <a href="/tags/etymology/" style="font-size: 10px;">etymology</a> <a href="/tags/hack/" style="font-size: 12.5px;">hack</a> <a href="/tags/i18n/" style="font-size: 10px;">i18n</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/org-mode/" style="font-size: 10px;">org-mode</a> <a href="/tags/org2blog/" style="font-size: 12.5px;">org2blog</a> <a href="/tags/patch/" style="font-size: 10px;">patch</a> <a href="/tags/regexp/" style="font-size: 10px;">regexp</a> <a href="/tags/resource/" style="font-size: 10px;">resource</a> <a href="/tags/rpm/" style="font-size: 10px;">rpm</a> <a href="/tags/utrace/" style="font-size: 10px;">utrace</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">十月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/03/">三月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/02/">二月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">一月 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">十二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/08/">八月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/02/">二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/01/">一月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">十二月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/11/">十一月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/07/">七月 2009</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/04/10/win10-home-hyperv-install/">Win10 家庭版上安装 Hyper-V 的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/">在 WSL2 环境中使用 Win10 宿主系统中代理的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/null-modem-auto-conf/">自动配置网线直连数据传输方案</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/ubuntu-18-04-cuda-memory/">Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/">在 CentOS 6.x 下使用 gcc 4.9.x 的方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        本文采用 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0 CN协议</a> 进行许可，
+可自由转载引用，但需署名作者并注明文章出处。
+      
+      &copy; 2022 chaoslawful<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives/" class="mobile-nav-link">归档</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

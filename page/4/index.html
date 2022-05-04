@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- XXX: added by wxz -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.css" integrity="sha384-zB1R0rpPzHqg7Kpt0Aljp8JPLqbXI3bhnPWROx27a9N0Ll6ZP/+DiW/UqRcLbRjq" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.11.1/dist/katex.min.js" integrity="sha384-y23I5Q6l+B6vatafAwxRu/0oK/79VlbSz7Q9aiSZUvyWYIYsd+qj+o24G5ZU2zJz" crossorigin="anonymous"></script>
+  <!-- XXX: ends here -->
+
+  
+  
+  <title>混沌猫的窝</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="混沌猫的窝">
+<meta property="og:url" content="https://chaoslawful.info/page/4/index.html">
+<meta property="og:site_name" content="混沌猫的窝">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:author" content="chaoslawful">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="混沌猫的窝" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">混沌猫的窝</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">首页</a>
+        
+          <a class="main-nav-link" href="/archives/">归档</a>
+        
+          <a class="main-nav-link" href="/about/">关于</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS 订阅"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="搜索"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://chaoslawful.info"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-linux-elf-ver" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/12/30/linux-elf-ver/" class="article-date">
+  <time class="dt-published" datetime="2009-12-30T08:34:00.000Z" itemprop="datePublished">2009-12-30</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/12/30/linux-elf-ver/">复习 Linux ELF 共享库的版本概念</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <ul>
+<li>soname for a shared library: <code>lib&lt;library name&gt;.so.&lt;major ver&gt;</code>
+<ul>
+<li>例： <em>libev.so.4</em></li>
+</ul>
+</li>
+<li>fully-qualified soname for a shared library: <code>&lt;path&gt;/lib&lt;library name&gt;.so.&lt;major ver&gt;</code>
+<ul>
+<li>例： <em>/usr/lib/libev.so.4</em></li>
+</ul>
+</li>
+<li>real name for a shared library: <code>lib&lt;library name&gt;.so.&lt;major ver&gt;.&lt;minor ver&gt;.&lt;release&gt;</code>
+<ul>
+<li>例： <em>libev.so.4.0.0</em></li>
+</ul>
+</li>
+<li>linker name for a shared library: <code>lib&lt;library name&gt;.so</code>
+<ul>
+<li>例： <em><a target="_blank" rel="noopener" href="http://libev.so">libev.so</a></em></li>
+</ul>
+</li>
+</ul>
+<p>一般 soname 对应的是一个符号链接，是在运行 <code>ldconfig</code> 时由其根据共享库 header 中的 <code>SONAME</code> 域创建的。如果创建共享库时未通过 <code>-Wl,-soname,...</code> 指定其 <code>SONAME</code> ，则 <code>ldconfig</code> 不会为其创建对应的 soname 符号链接。linker name 对应的符号链接主要用于开发链接使用，一般是创建一个指向 soname 而不是 real name 的链接，以便减少版本更替时需要改变的链接数量（当然共享库数量较少时指向 soname 或 real name 均可，系统软件包也是两种方式都有采用的例子）。</p>
+<p><code>&lt;major ver&gt;</code> 主要表明接口 ABI 兼容性，一般如果共享库接口产生了非向前兼容的更改就要升级 <code>&lt;major ver&gt;</code> 。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/12/30/linux-elf-ver/" data-id="cl2rftlff00088src6pb5gjkk" data-title="复习 Linux ELF 共享库的版本概念" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-centos-apache-selinux" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/12/25/centos-apache-selinux/" class="article-date">
+  <time class="dt-published" datetime="2009-12-25T07:27:00.000Z" itemprop="datePublished">2009-12-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/12/25/centos-apache-selinux/">CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>最近帮同事检查一个 Apache 的问题，现象如下：</p>
+<ul>
+<li>原本配置了多个 <code>VirtualHost</code> ，<code>DocumentRoot</code> 指向 <code>/var/www/</code> 下不同的子目录，都能正常工作</li>
+<li>新加了一个 <code>VirtualHost</code> ，将 <code>DocumentRoot</code> 指向 <code>/home/aa/</code> ，重启 Apache 后无法访问该 <code>VirtualHost</code> 下的内容，提示 <code>403 Forbidden</code> ，而此时访问原先的几个 <code>VirtualHost</code> 还是没有问题</li>
+<li>Apache 错误日志里没有什么奇怪的输出</li>
+<li>操作系统 <strong>CentOS 4.x</strong></li>
+</ul>
+<p>首先考虑是不是新加的 <code>VirtualHost</code> 配置有误导致文件路径映射错误，所以用 <code>strace</code> 跟了一下 Apache 看它在哪个阶段出问题的，发现 Apache 去访问的文件路径在 <code>/home/aa/</code> 下，该文件也确实存在，从 <code>/home/aa/</code> 直到该文件的各级目录都有 <code>a+rx</code> 权限， Apache 应该能直接访问。诡异的是， Apache 进程调用的 <code>lstat64</code> 系统调用对 <code>/home</code> 、 <code>/home/aa</code> 进行权限检查时都是 OK，但对 <code>/home/aa</code> 下的目标文件进行权限检查时却是 <code>EACCESS</code> ，让人百思不解。</p>
+<p>后来才发现原来该系统上未关闭 SELinux 子系统，而 SELinux 默认会对 Apache 进程 httpd 进行若干保护，其中一种就是只允许 httpd 访问特定路径下的文件，系统默认的 <code>/var/www</code> 在允许之列，而其他目录都是禁止访问的。解决办法有二：</p>
+<ul>
+<li>临时关闭 SELinux 对 httpd 的保护：
+<ol>
+<li><code>setsebool -P httpd_disable_trans 1</code></li>
+<li>重启 Apache</li>
+</ol>
+</li>
+<li>永久关闭 SELinux 子系统：
+<ol>
+<li>修改 <code>/etc/sysconfig/selinux</code> ，将其中的 <code>SELINUX=...</code> 改为 <code>SELINUX=disabled</code></li>
+<li>重启操作系统</li>
+</ol>
+</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/12/25/centos-apache-selinux/" data-id="cl2rftlfd00058srca05w2z3v" data-title="CentOS/RHEL 上 Apache 一个诡异问题的解决（都是浮云）" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-zfor-preload" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/12/25/zfor-preload/" class="article-date">
+  <time class="dt-published" datetime="2009-12-25T07:05:00.000Z" itemprop="datePublished">2009-12-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/12/25/zfor-preload/">LD_PRELOAD 对 PHP extension 失效的原因</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>最近写了一个主机健康检测和软负载均衡用的软件 <a target="_blank" rel="noopener" href="http://github.com/chaoslawful/zfor">ZFOR</a> ，可以通过 <code>LD_PRELOAD</code> 预载入的方式拦截系统的域名解析调用（ <code>gethostbyname</code> 、 <code>getaddrinfo</code> 等）。但发现对某些发行版的 PHP CURL extension 光加载 zfor 动态库没有用，还必须同时加载 <code>libcurl.so</code> 才能生效。</p>
+<p>经过一番搜索，发现原来是 PHP 编译时让 Zend 引擎使用了 <code>RTLD_DEEPBIND</code> 标志来加载扩展，该标志的作用是约束动态符号解析的查找范围为载入的动态库及其依赖项，而不是从所有已加载项的符号表中寻找。PHP 启用该选项的原意是避免同时加载多个具有共同依赖库的扩展时产生多版本符号解析冲突的问题，但在这里就影响了 zfor 的 preload 拦截过程。因为 PHP CURL 扩展只依赖 <code>libcurl.so</code> 而不依赖 <code>libzfor.so</code> ，故在不预加载 <code>libcurl.so</code> 时 <code>libzfor.so</code> 不会列入 PHP CURL 扩展符号解析的查找范围，这样在 <code>libzfor.so</code> 中定义的 <code>getaddrinfo</code> 别名自然无法生效。</p>
+<p>在同时预加载 <code>libcurl.so</code> 和 <code>libzfor.so</code> 时，由于是系统的动态库加载器 <code>ld-linux.so</code> 按默认解析策略进行符号解析，故会将 <code>libcurl.so</code> 中引用的 <code>getaddrinfo</code> 符号解析到 <code>libzfor.so</code> 中提供的实现上，而由于动态库都是单实例加载的，这样当 PHP CURL 扩展被载入时，其依赖的 <code>libcurl.so</code> 就会用之前预加载的那个实例来解决，不需要再进行符号查找，也就不用受到 <code>RTLD_DEEPBIND</code> 标志的约束了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/12/25/zfor-preload/" data-id="cl2rftlfe00068src8dwk6oih" data-title="LD_PRELOAD 对 PHP extension 失效的原因" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-xen-sysdate" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/12/09/xen-sysdate/" class="article-date">
+  <time class="dt-published" datetime="2009-12-09T09:24:00.000Z" itemprop="datePublished">2009-12-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/12/09/xen-sysdate/">在 Xen 虚拟机下修改系统当前时间</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>Xen 虚拟机默认不允许不同的虚拟机使用不同的系统时间，因此所有虚拟机的系统时间都会同宿主机的系统时间严格同步，用 <code>date</code> 命令修改虚拟机系统时间时虽然提示成功但其实系统时间还是没变。若有独立修改 Xen 虚拟机的特殊需要，可以通过如下方法进行：</p>
+<ul>
+<li>在 Xen 虚拟机的 root 提示符下输入如下命令之一以启用虚拟机独立的系统时间：  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt; /proc/sys/xen/independent_wallclock</span><br></pre></td></tr></table></figure>
+或  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sysctl xen.independent_wallclock=1</span><br></pre></td></tr></table></figure>
+</li>
+<li>然后用 <code>date -s &lt;target date&gt;</code> 应该就可以设置系统时间了</li>
+</ul>
+<p>这样的设置在虚拟机重启以后就会失效，若要使该设置永久生效，可以进行如下改动之一：</p>
+<ul>
+<li>修改 <code>/etc/sysctl.conf</code> 文件，增加如下内容：</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Set independent wall clock time</span></span><br><span class="line">xen.independent_wallclock=1</span><br></pre></td></tr></table></figure>
+<ul>
+<li>在虚拟机启动时的 kernel 命令行中加入选项 <code>independent_wallclock=1</code></li>
+</ul>
+<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://docs.vmd.citrix.com/XenServer/4.0.1/guest/ch04s06.html">http://docs.vmd.citrix.com/XenServer/4.0.1/guest/ch04s06.html</a></li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/12/09/xen-sysdate/" data-id="cl2rftlfc00048src38m8ckcj" data-title="在 Xen 虚拟机下修改系统当前时间" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-accessing-ext3-under-xp" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/11/25/accessing-ext3-under-xp/" class="article-date">
+  <time class="dt-published" datetime="2009-11-25T15:37:00.000Z" itemprop="datePublished">2009-11-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/11/25/accessing-ext3-under-xp/">Accessing EXT2/3 partition under Windows XP</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p>After some googling I found several ways to do the job:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="http://www.chrysocome.net/explore2fs">Explore2fs</a>
+<ul>
+<li><em>Pros:</em> Open-source; No installing needed</li>
+<li><em>Cons:</em> Read only; Exporting file is too slow...</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="http://www.fs-driver.org/index.html">Ext2 IFS</a>
+<ul>
+<li><em>Pros:</em> Mount EXT2/3 partition to a real disk letter; High accessing speed</li>
+<li><em>Cons:</em> Installing needed; No source available</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="http://www.ext2fsd.com/">Ext2Fsd</a>
+<ul>
+<li><em>Pros:</em> Opensource; Mount EXT2/3 partition to a real disk letter</li>
+<li><em>Cons:</em> Installing needed; Complex operations</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="http://www.diskinternals.com/linux-reader/">Diskinternal Linux Reader</a>
+<ul>
+<li><em>Pros:</em> User-friendly interface with lots of whistles</li>
+<li><em>Cons:</em> Installing needed; No source available; Not support UTF-8 charset</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="http://www.chrysocome.net/virtualvolumes">Virtual Volumes</a>
+<ul>
+<li><em>Pros:</em> Opensource</li>
+<li><em>Cons:</em> Installing needed; Not completed yet...</li>
+</ul>
+</li>
+</ol>
+<p>Finally I chose Ext2 IFS 😃</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/11/25/accessing-ext3-under-xp/" data-id="cl2rftlf900028srcehhdhojq" data-title="Accessing EXT2/3 partition under Windows XP" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+    <article id="post-boost-shared_ptr" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2009/07/24/boost-shared_ptr/" class="article-date">
+  <time class="dt-published" datetime="2009-07-24T12:23:00.000Z" itemprop="datePublished">2009-07-24</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2009/07/24/boost-shared_ptr/">如何避免 boost::shared_ptr 管理的共享对象被意外删除</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><code>boost::shared_ptr</code> （已进入C++ TR1标准）是管理共享对象的好帮手，但由于其 <code>get()</code> 方法能获取原对象裸指针，因此存在其管理的对象被人为意外删除的危险。最近看 boost 相关资料时发现一些方法能避免该问题。</p>
+<h2 id="方案1-使用包装类"><a class="markdownIt-Anchor" href="#方案1-使用包装类"></a> 方案1 - 使用包装类</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">T</span> &#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    ~<span class="built_in">T</span>() &#123;...&#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">   ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TWrapper</span> &#123;</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">boost::shared_ptr&lt;T&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> TWrapper)</span></span>;</span><br><span class="line"><span class="keyword">delete</span> p.<span class="built_in">get</span>(); <span class="comment">// Oops...Compile-time error!</span></span><br></pre></td></tr></table></figure>
+<p>这是因为 <code>shared_ptr</code> 对象内部指向的共享引用计数对象保存的是原始指针（这里就是 <code>TWrapper*</code> ），引用计数为 0 时可以用该指针正常调用 <code>delete</code> ，而从 <code>get()</code> 方法获得的是 <code>shared_ptr</code> 对象缓存的指针，类型为 <code>T*</code> ，而 <code>class T</code> 的析构函数被保护了，故不能显式被 <code>delete</code> 。该方案缺点是需要引入一个新类，且当原类构造函数有多种形式时，包装类也要对应提供这些形式的构造函数，二者是紧耦合的；优点是创建对象方式同以前没有变化。</p>
+<h2 id="方案2-使用自定义析构函数"><a class="markdownIt-Anchor" href="#方案2-使用自定义析构函数"></a> 方案2 - 使用自定义析构函数</h2>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">T</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">deleter</span> &#123;</span></span><br><span class="line">        <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span> <span class="params">(T *p)</span> </span>&#123; <span class="keyword">delete</span> p; &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">friend</span> <span class="class"><span class="keyword">class</span> <span class="title">deleter</span>;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="built_in">T</span>() &#123; ... &#125;</span><br><span class="line">    ~<span class="built_in">T</span>() &#123; ... &#125;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> boost::shared_ptr&lt;T&gt; <span class="title">createObject</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> boost::shared_ptr&lt;T&gt;(<span class="keyword">new</span> <span class="built_in">T</span>(), T::<span class="built_in">deleter</span>());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">boost::shared_ptr&lt;T&gt; p = T::<span class="built_in">createObject</span>();</span><br><span class="line"><span class="keyword">delete</span> p.<span class="built_in">get</span>(); <span class="comment">// Oops...Compile-time error!</span></span><br></pre></td></tr></table></figure>
+<p>该方案利用 <code>shared_ptr</code> 的自定义析构函数形式实现，将析构函子类作为私有类封装在 <code>class T</code> 内部，以避免被外部直接利用；创建对象时也不再使用标准 <code>new</code> 形式，而是封装了对应的静态工厂方法，为了避免绕过工厂方法创建对象，还要将 <code>class T</code> 的构造函数也保护起来。该方案的缺点是创建对象方法彻底改变，且工厂方法接口要同原有类构造函数的形式一致；优点是所有的机制都封装在原有类内部，不需要额外引入新类型。</p>
+<p>从 <code>shared_ptr</code> 内部的共享引用计数对象保存原始指针这一特性可知，若创建 <code>shared_ptr</code> 对象时传入的是派生类指针，即使基类没有将析构函数定义为 <code>virtual</code> 的，共享对象被删除时也会正常调用派生类的析构函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Base</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ~<span class="built_in">Base</span>() &#123; cout &lt;&lt; <span class="string">&quot;Base dtor\n&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Derived</span> :</span> <span class="keyword">virtual</span> <span class="keyword">public</span> Base &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    ~<span class="built_in">Derived</span>() &#123; cout &lt;&lt; <span class="string">&quot;Derived dtor\n&quot;</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">boost::shared_ptr&lt;Base&gt; <span class="title">p</span><span class="params">(<span class="keyword">new</span> Derived)</span></span>;</span><br><span class="line">    <span class="comment">// shared_ptr object release managed-object here, will call dtors of class Derived and Base in order</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Base *q = <span class="keyword">new</span> Derived;</span><br><span class="line"><span class="keyword">delete</span> q; <span class="comment">// Here only dtor of class Base is called for it&#x27;s not declared to be virtual</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2009/07/24/boost-shared_ptr/" data-id="cl2rftlf700018srccgyo3vqi" data-title="如何避免 boost::shared_ptr 管理的共享对象被意外删除" class="article-share-link">分享</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/" rel="tag">C++</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
+
+
+  <nav id="page-nav">
+    
+    <a class="extend prev" rel="prev" href="/page/3/">&laquo; 上一页</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+  </nav>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ANTLR/" rel="tag">ANTLR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Alienware/" rel="tag">Alienware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eclipse/" rel="tag">Eclipse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/" rel="tag">Emacs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/" rel="tag">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GNUCash/" rel="tag">GNUCash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lombok/" rel="tag">Lombok</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDR/" rel="tag">SDR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/etymology/" rel="tag">etymology</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hack/" rel="tag">hack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org-mode/" rel="tag">org-mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org2blog/" rel="tag">org2blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/patch/" rel="tag">patch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resource/" rel="tag">resource</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpm/" rel="tag">rpm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/utrace/" rel="tag">utrace</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ANTLR/" style="font-size: 10px;">ANTLR</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/Alienware/" style="font-size: 10px;">Alienware</a> <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Apache/" style="font-size: 10px;">Apache</a> <a href="/tags/Boost/" style="font-size: 10px;">Boost</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Eclipse/" style="font-size: 10px;">Eclipse</a> <a href="/tags/Emacs/" style="font-size: 12.5px;">Emacs</a> <a href="/tags/Erlang/" style="font-size: 10px;">Erlang</a> <a href="/tags/Ext3/" style="font-size: 10px;">Ext3</a> <a href="/tags/GCC/" style="font-size: 12.5px;">GCC</a> <a href="/tags/GNUCash/" style="font-size: 12.5px;">GNUCash</a> <a href="/tags/Hyper-V/" style="font-size: 10px;">Hyper-V</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/JIT/" style="font-size: 10px;">JIT</a> <a href="/tags/Java/" style="font-size: 17.5px;">Java</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Lombok/" style="font-size: 10px;">Lombok</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/SDR/" style="font-size: 10px;">SDR</a> <a href="/tags/SELinux/" style="font-size: 10px;">SELinux</a> <a href="/tags/Tooky/" style="font-size: 10px;">Tooky</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Virtualization/" style="font-size: 12.5px;">Virtualization</a> <a href="/tags/WSL/" style="font-size: 12.5px;">WSL</a> <a href="/tags/Win10/" style="font-size: 12.5px;">Win10</a> <a href="/tags/WinXP/" style="font-size: 10px;">WinXP</a> <a href="/tags/XEN/" style="font-size: 10px;">XEN</a> <a href="/tags/deb/" style="font-size: 10px;">deb</a> <a href="/tags/etymology/" style="font-size: 10px;">etymology</a> <a href="/tags/hack/" style="font-size: 12.5px;">hack</a> <a href="/tags/i18n/" style="font-size: 10px;">i18n</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/org-mode/" style="font-size: 10px;">org-mode</a> <a href="/tags/org2blog/" style="font-size: 12.5px;">org2blog</a> <a href="/tags/patch/" style="font-size: 10px;">patch</a> <a href="/tags/regexp/" style="font-size: 10px;">regexp</a> <a href="/tags/resource/" style="font-size: 10px;">resource</a> <a href="/tags/rpm/" style="font-size: 10px;">rpm</a> <a href="/tags/utrace/" style="font-size: 10px;">utrace</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">十月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/03/">三月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/02/">二月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">一月 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">十二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/08/">八月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/02/">二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/01/">一月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">十二月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/11/">十一月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/07/">七月 2009</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">最新文章</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2021/04/10/win10-home-hyperv-install/">Win10 家庭版上安装 Hyper-V 的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/">在 WSL2 环境中使用 Win10 宿主系统中代理的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/null-modem-auto-conf/">自动配置网线直连数据传输方案</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/ubuntu-18-04-cuda-memory/">Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</a>
+          </li>
+        
+          <li>
+            <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/">在 CentOS 6.x 下使用 gcc 4.9.x 的方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+        本文采用 <a target="_blank" rel="noopener" href="http://creativecommons.org/licenses/by/4.0/deed.zh">CC BY 4.0 CN协议</a> 进行许可，
+可自由转载引用，但需署名作者并注明文章出处。
+      
+      &copy; 2022 chaoslawful<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/archives/" class="mobile-nav-link">归档</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav>
+    
+
+
+<script src="/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>
