@@ -12,6 +12,7 @@ date: 2013-10-09 22:35:00
 Bus 001 Device 010: ID 4bb0:30d2
 ```
 那么 vendor id 就是 `0x4bb0`
+<!-- more -->
 
 ## 增加识别手机设备的 udev 规则
 编辑 `/etc/udev/rules.d/51-android.rules` ，加入如下内容：

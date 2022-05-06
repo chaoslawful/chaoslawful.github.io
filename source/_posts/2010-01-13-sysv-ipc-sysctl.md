@@ -7,6 +7,7 @@ date: 2010-01-13 10:34:00
 ---
 
 SysV IPC 包括 Semaphore、Shared Memory 和 Message Queue 这 3 类进程间通信手段，虽然 POSIX.1-2001 实时接口标准规定了另一套提供相同手段但更一致化的接口（POSIX IPC），但 SysV IPC 仍然有相当数量的用户。
+<!-- more -->
 
 通过调整一些内核参数，可以更改 SysV IPC 对数据的固有限制，相关参数对应的控制文件可在 `/proc/sys/kernel/` 目录下找到，也可以通过 `sysctl` 更改，现罗列如下：
 

@@ -16,6 +16,7 @@ MathJax.Hub.Config({
 });
 </script>
 ```
+<!-- more -->
 
 这里的 `displayIndent` 可以控制左对齐公式的缩进宽度，若设为 "0" 就表示同正文平齐。下面是具体的例子：
 

@@ -9,6 +9,7 @@ tags:
 ---
 
 WSL2 需要打开 Hyper-V 的支持，而 Win10 家庭版上没有 Hyper-V 完整组件，有 2 种方法可以开启 Hyper-V：
+<!-- more -->
 
 1. 在管理员权限的 PowerShell 中执行如下命令行即可开启 Hyper-V 服务：
 ```bash

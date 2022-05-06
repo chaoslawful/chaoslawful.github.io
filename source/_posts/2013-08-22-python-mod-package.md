@@ -8,6 +8,7 @@ date: 2013-08-22 12:34:00
 ---
 
 Python 模块的安装可以用 easy_install 或 pip 方便地完成，但此类工具难以应用在生产系统的部署中。使用 DEB/RPM 包的好处是大规模部署简单、容易回滚且能以一致的方式管理依赖，所以需要将 Python 模块打成此类原生包。
+<!-- more -->
 
 打 RPM 包比较简单，现在的模块一般都是 setuptools 规范的，只要简单地进入模块源码目录，运行 `python setup.py bdist_rpm` 即可打出 RPM 包。
 

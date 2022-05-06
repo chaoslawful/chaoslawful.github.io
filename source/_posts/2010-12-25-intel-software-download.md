@@ -6,6 +6,7 @@ date: 2010-12-25 22:06:00
 ---
 
 http://software.intel.com/en-us/articles/non-commercial-software-download/
+<!-- more -->
 
 ## 更新下载内容
 

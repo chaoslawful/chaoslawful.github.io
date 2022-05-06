@@ -6,6 +6,7 @@ date: 2012-01-29 11:15:00
 ---
 
 PPStream 的 Linux 版本只出了 i386 架构的安装包，但由于 64 位 Ubuntu 11.10 的包划分有所变化，直接安装 PPStream 官方 deb 包会提示依赖问题。在我的机器上通过以下步骤可以成功安装 PPStream：
+<!-- more -->
 - 安装 32 位支持库：
 ```bash
 sudo apt-get install ia32-libs

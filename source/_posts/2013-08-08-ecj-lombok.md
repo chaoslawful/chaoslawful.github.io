@@ -8,6 +8,7 @@ date: 2013-08-08 11:10:00
 ---
 
 [Lombok](http://projectlombok.org/) 借助 javac 的内部 API 介入 annotation 处理环节，并根据其特有的 annotation 在编译期生成代码，能够大大简化 Java 代码很多冗余的写法。但正是因为其依赖于 javac 内部 API，Lombok 很难在其他 Java 编译器上使用，例如常用的替代编译器 Eclipse Compiler (ecj) 就是如此。
+<!-- more -->
 
 为了在非 javac 编译器上也能享受 Lombok 带来的好处，一个可能的方案是实际编译之前先借助 javac 的内部运行时库对 Java 代码进行 delombok 操作，即将被 Lombok 修改后的 Java 代码导出成实际文件，再使用 Eclipse Compiler 这样的替代编译器对导出代码进行真正的编译操作。方法如下：
 - 先让 Maven 项目在编译前预先执行 delombok 操作，修改 `pom.xml` 增加如下内容：

@@ -11,6 +11,7 @@ tags:
 ### 背景
 
 使用自己电脑的 N 卡进行 CUDA 加速时都希望能使用全部显存，但在 Ubuntu 18.04 LTS 中安装官方专有驱动后，如果用 nvidia-settings 将 PRIME profiles 设为 Nvidia，会让包括 X 桌面在内的所有图形加速功能都走 N 卡，会占用不少显存。若将 PRIME profiles 改为 Intel，N 卡驱动又不会被加载，无法使用 CUDA 加速。
+<!-- more -->
 
 ### 解决方法
 

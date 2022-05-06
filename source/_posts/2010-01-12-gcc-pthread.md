@@ -12,6 +12,7 @@ date: 2010-01-12 17:49:00
 $ gcc -c x.c
 $ gcc x.o -ox -lpthread
 ```
+<!-- more -->
 
 而 GCC 手册里则指出应该在编译和链接时都增加 `-pthread` 选项，像这样：
 ```bash

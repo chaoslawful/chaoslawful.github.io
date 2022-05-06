@@ -11,6 +11,7 @@ date: 2012-03-25 22:48:00
 1. `sudo apt-get install fakeroot build-essential crash kexec-tools makedumpfile kernel-wedge kernel-package`
 2. `sudo apt-get build-dep linux`
 3. `sudo apt-get install git-core libncurses5 libncurses5-dev libelf-dev asciidoc binutils-dev`
+<!-- more -->
 
 检出带有 utrace 补丁的官方内核代码，并生成对应 Ubuntu 当前版本内核（3.0）的补丁：
 1. `git clone https://github.com/utrace/linux.git utrace-linux-git`

@@ -7,7 +7,7 @@ date: 2010-02-04 12:03:00
 ---
 
 Erlang 的 DNS 解析方法有包括 file（读取 `/etc/hosts` 文件）、dns（Erlang 自己的 DNS 客户端）、native（调用外部程序 `inet_gethost` 用 libc 的 `gethostbyname` 函数解析域名） 在内的好几种方式，可以在 kernel inetrc 文件中以 `{lookup, [...]}` 形式指定多种 DNS 解析方法的应用顺序。在 `inet:gethostbyname_tm/4` 函数中可以发现任意一个域名的解析顺序是：
-
+<!-- more -->
 1. 尝试按 lookup 属性中指定的顺序应用 file、dns、native（或 yp、nis、nisplus、wins 等）中的方法解析域名，并忽略不认识的 DNS 解析方法；
 2. 若所有指定的 DNS 解析方法都试过以后也没能得到 IP 地址，就检查给定域名是不是已经是一个 IPv4/v6 地址了，若是则直接返回，否则报错。
 

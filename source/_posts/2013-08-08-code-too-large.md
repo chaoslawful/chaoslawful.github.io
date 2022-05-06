@@ -8,6 +8,7 @@ date: 2013-08-08 17:48:00
 ---
 
 我参与的一个实际项目里用到了 ANTLR 3.x 进行 parser 代码自动生成，其中含有大量的 static field 用作状态转移查找表。由于一个 class 中所有 static field 都是放在一个匿名 method 中统一进行初始化，而 Java VM 规范规定一个 class 中单个 method 中 bytecode 长度最多不能超过 65535 bytes，这个自动生成的 parser class 始终无法在 javac 上编译，总是会提示 `error: code too large` 。但问题是在 Eclipse 中编译使用该文件完全没有问题，由于 65535 bytes 的限制是 Java VM 规范所规定，同生成 class 的编译器没有关系，因此原因只可能是 ecj 生成的 bytecode 比 javac 少，这就有点儿诡异了。
+<!-- more -->
 
 要查看 class 中的字节码可以用 `javap` 程序完成，通过下面的命令可以将有问题的 class （这里假设是 Test）的静态初始化匿名 method 中所有 bytecode 输出：
 ```bash

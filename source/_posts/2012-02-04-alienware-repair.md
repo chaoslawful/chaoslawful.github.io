@@ -6,6 +6,7 @@ date: 2012-02-04 01:43:00
 ---
 
 Alienware M17x R3 已经到手很久了，本来配置的 AMD Radeon HD 6990M 是准备拿来玩 GPGPU 的。但由于 Alienware 坚持使用 Muxed Graphics Switch（人工切换集/独显比较可靠），而 Linux 下的新版本 AMD Catalyst 驱动只支持 Muxless Graphics Switch，使得这块卡在 Linux 下一直得不到很好的应用。
+<!-- more -->
 
 如果能禁用集成显卡，应该就可以正常使用 Catalyst 驱动，杯具的是官方 BIOS 从 A04 版之后就去掉了显卡切换选项，Linux 下也没发现有软件方式解决该问题。最近在这里找到人家破解的 M17x R3 A08 BIOS 解开了显卡切换选项，于是刷上试试。在新 BIOS 的第 2 个 Advanced/Video Configuration/Internal Graphics Device 组中，把 Internal Graphics Device 对应选项从原来的 Auto 改为 Disable 禁用集显，然后 Catalyst 果然好用了，只是屏幕亮度在禁用集显之后略有下降，不影响使用。
 

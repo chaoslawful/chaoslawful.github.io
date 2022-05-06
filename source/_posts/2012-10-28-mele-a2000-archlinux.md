@@ -8,6 +8,7 @@ date: 2012-10-28 02:39:00
 ---
 
 本来以为 archlinuxarm.org 上有 Mele A100 的安装指南装起来会方便些，但实际操作过程中仍然踩了一些坑，这里记录一下备查。
+<!-- more -->
 
 我选择 Mele A2000 的原因就是因为有 SATA 口，使用最新的 U-boot 后有可能直接把根分区放在 SATA 盘上，这样比起根分区在 SD 卡或 USB2.0 硬盘启动要快很多。遗憾的是，archlinuxarm.org 上最新的 sun4i 架构 rootfs 中带的 kernel 内置的启动代码有点儿小问题，在新版 Mele A2000 的板子上会将 SATA 控制器时钟设置错误，导致 kernel 启动挂载 sata 盘分区时循环显示 sata 接口 reset 错误无法继续：
 ```

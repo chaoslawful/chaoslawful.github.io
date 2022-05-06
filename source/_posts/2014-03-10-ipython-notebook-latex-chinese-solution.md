@@ -7,6 +7,7 @@ date: 2014-03-10 10:32:00
 ---
 
 从 IPython 1.0 开始 IPython Notebook 就自带了 nbconvert 工具，可以将 notebook 转换为 HTML/LaTeX/Markdown/reStructure/Slides 等多种外部格式，以方便内容的快速重用。从内容展现的一致性上看，将 notebook 转成 LaTeX 再处理为 PDF 文件是表现最好的，因此使用频率也最高，然而当 notebook 中出现中文时，默认生成的 LaTeX 文件无法进行支持，会导致最终生成的 PDF 文件中中文部分都是空白。经过实验，对生成的 LaTeX 文件进行如下手工修改可以快速修正此问题：
+<!-- more -->
 
 + 首先用 nbconvert 将 notebook 转为 LaTeX 文件：
 ```bash
