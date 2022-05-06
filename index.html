@@ -38,7 +38,7 @@
 <link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
 
   
-<meta name="generator" content="Hexo 5.4.0"></head>
+<meta name="generator" content="Hexo 5.4.2"></head>
 
 <body>
   <div id="container">
@@ -79,6 +79,50 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-clip-vqgan-keywords" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/2022/05/06/clip-vqgan-keywords/" class="article-date">
+  <time class="dt-published" datetime="2022-05-06T15:41:00.000Z" itemprop="datePublished">2022-05-06</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/2022/05/06/clip-vqgan-keywords/">CLIP+VQGAN 风格关键词示例</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <p><a target="_blank" rel="noopener" href="https://github.com/alembics/disco-diffusion">Disco Diffusion</a> 是最近比较火的多模态 AI 图像生成系统，可以通过英文文本描述直接生成质量还不错的画作。
+该系统生成图像的风格受到若干关键词的强烈影响，因此社区中一个热点就是寻找各种风格独特的关键词组合。imgur 上有位网友 @kingdomakrillic 整理了一份
+CLIP + VQGAN 生成图像的风格关键词示例，基本上可以直接套用到 Disco Diffusion 系统中，非常有用！</p>
+        
+          <p class="article-more-link">
+            <a href="/2022/05/06/clip-vqgan-keywords/#more">Read More</a>
+          </p>
+        
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://chaoslawful.info/2022/05/06/clip-vqgan-keywords/" data-id="cl2unx0nq001wsmrc7dqsbxa5" data-title="CLIP+VQGAN 风格关键词示例" class="article-share-link">分享</a>
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CLIP/" rel="tag">CLIP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Disco-Diffusion/" rel="tag">Disco Diffusion</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/VQGAN/" rel="tag">VQGAN</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-win10-home-hyperv-install" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/2021/04/10/win10-home-hyperv-install/" class="article-date">
@@ -102,23 +146,15 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>WSL2 需要打开 Hyper-V 的支持，而 Win10 家庭版上没有 Hyper-V 完整组件，有 2 种方法可以开启 Hyper-V：</p>
-<ol>
-<li>在管理员权限的 PowerShell 中执行如下命令行即可开启 Hyper-V 服务：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bcdedit /<span class="built_in">set</span> hypervisorlaunchtype auto</span><br></pre></td></tr></table></figure>
-<ol>
-<li>将以下代码另存为 <code>hyper-v.bat</code>，以管理员权限执行即可安装完整的 Hyper-V 组件：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">pushd</span> <span class="string">&quot;%~dp0&quot;</span></span><br><span class="line">dir /b %SystemRoot%\servicing\Packages\*Hyper-V*.mum &gt;hv.txt</span><br><span class="line"><span class="keyword">for</span> /f %%i <span class="keyword">in</span> (<span class="string">&#x27;findstr /i . hyper-v.txt 2^&gt;nul&#x27;</span>) <span class="keyword">do</span> dism /online /norestart /add-package:<span class="string">&quot;%SystemRoot%\servicing\Packages\%%i&quot;</span></span><br><span class="line">del hv.txt</span><br><span class="line">dism /online /enable-feature /featurename:Microsoft-Hyper-V -All /LimitAccess /ALL</span><br><span class="line">pause</span><br></pre></td></tr></table></figure>
-<h1 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h1>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/en-us/answers/questions/29175/installation-of-hyper-v-on-windows-10-home.html">https://docs.microsoft.com/en-us/answers/questions/29175/installation-of-hyper-v-on-windows-10-home.html</a></li>
-</ul>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/04/10/win10-home-hyperv-install/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2021/04/10/win10-home-hyperv-install/" data-id="cl2rh9fl2004yw1rcf9j02uxj" data-title="Win10 家庭版上安装 Hyper-V 的方法" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/10/win10-home-hyperv-install/" data-id="cl2unx0np001tsmrc9sig1n7k" data-title="Win10 家庭版上安装 Hyper-V 的方法" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li></ul>
 
@@ -153,31 +189,15 @@
       
         <h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
 <p>Win10 中 WSL2 环境是一个 HyperV 管理的独立容器，其网络相对宿主系统独立，不像 WSL1 环境那样是和宿主系统网卡直接桥接起来的。WSL2 这样的架构虽然运行效率提高不少，但却无法像 WSL1 那样能直接使用宿主系统提供的代理服务，造成了不少麻烦。</p>
-<h2 id="解决方案"><a class="markdownIt-Anchor" href="#解决方案"></a> 解决方案</h2>
-<p>解决办法很简单，只要允许代理服务为非 <code>localhost</code> 来源地址服务，然后直接使用宿主系统的 IP 地址就能访问到代理了。以 Ubuntu WSL2 环境访问 Shadowsocks 代理为例，步骤如下：</p>
-<ol>
-<li>允许 Shadowsocks 服务非本地来源地址：
-<img src="/images/wsl2-use-win10-proxy/ss-config.png" alt="" /></li>
-<li>在 <code>.bashrc</code> 中加入如下的函数方便打开/关闭代理（假设宿主系统 IP 地址为 <code>192.168.175.173</code>，Shadowsocks SOCKS5 代理在 <code>1080</code> 端口）：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">proxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 设置全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">export</span> ALL_PROXY=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="built_in">export</span> all_proxy=<span class="string">&quot;socks5://192.168.175.173:1080&quot;</span></span><br><span class="line">    <span class="comment"># 给 apt-get 增加代理配置</span></span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::http::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="built_in">echo</span> -e <span class="string">&quot;Acquire::https::Proxy \&quot;http://192.168.175.173:1080\&quot;;&quot;</span> | sudo tee -a /etc/apt/apt.conf &gt; /dev/null</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">noproxy</span></span> () &#123;</span><br><span class="line">    <span class="comment"># 清除全局代理服务器环境变量</span></span><br><span class="line">    <span class="built_in">unset</span> ALL_PROXY</span><br><span class="line">    <span class="built_in">unset</span> all_proxy</span><br><span class="line">    <span class="comment"># 清除 apt-get 代理设置</span></span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::http::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    sudo sed -i -e <span class="string">&#x27;/Acquire::https::Proxy/d&#x27;</span> /etc/apt/apt.conf</span><br><span class="line">    <span class="comment"># 提示用户当前出口地址</span></span><br><span class="line">    curl myip.ipip.net</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样在终端上就可直接用 <code>proxy</code> 开启代理，<code>noproxy</code> 关闭代理。</p>
-<ol>
-<li>对于那些不使用全局代理服务器环境变量的应用，可以安装 <code>proxychains</code> 来实现拦截其网络通信强制走代理的目的：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt install proxychains tor</span><br></pre></td></tr></table></figure>
-<p>安装完毕后，向 <code>/etc/proxychains.conf</code> 增加如下配置：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[ProxyList]</span></span><br><span class="line">socks5 192.168.175.173 1080</span><br></pre></td></tr></table></figure>
-<p>然后就能用 <code>proxychains &lt;app_path&gt; &lt;cmdline&gt;</code> 的形式强制应用使用代理了。</p>
-<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144647249">https://zhuanlan.zhihu.com/p/144647249</a></li>
-</ul>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/04/08/wsl-2-how-to-use-win10-proxy/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/" data-id="cl2rh9fki001tw1rc148geawg" data-title="在 WSL2 环境中使用 Win10 宿主系统中代理的方法" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/08/wsl-2-how-to-use-win10-proxy/" data-id="cl2unx0no001ssmrcgifyfbpq" data-title="在 WSL2 环境中使用 Win10 宿主系统中代理的方法" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li></ul>
 
@@ -212,25 +232,15 @@
       
         <h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
 <p>在很多场景下（手头没有 U 盘、某台电脑 USB 口不可用或没有足够权限安装存储设备驱动等等），我们都需要通过网线直连的方式在两台电脑之间传输数据，这样就要求正确地将两台电脑设置为同一子网下的不同静态 IP。对于电脑知识较为丰富的用户来说此设置过程非常简单，但对于一般用户来说就比较困难了，此时就希望通过程序自动配置好这种网络环境。</p>
-<h2 id="分析"><a class="markdownIt-Anchor" href="#分析"></a> 分析</h2>
-<p>这里主要针对 Windows XP 系统自动配置进行分析，因 Vista 以上版本系统已经有了 <code>zeroconf</code> 的实现，有现成的解决方案可用。</p>
-<p>网卡地址要么是静态设置，要么是动态 DHCP 分配的。对于静态设置 IP 的情况，拔掉再插上网线后 Windows 系统会监测到媒介状态变化，并自动发送若干源 MAC 为对应网卡 MAC，源/目标 IP 均为当前网卡静态设置 IP 的 ARP 包（称为 Gratuitous ARP 包，用来向子网内其他机器或网关主张自己的静态 IP 所有权），若将网线另一侧机器的 IP 设置为同一子网内的地址，两台机器就能正常通讯了。</p>
-<p><img src="/images/2015-07-21/static-ip-pcap.png" alt="Static IP Capture" title="静态 IP 抓包结果" /></p>
-<p>对于动态 DHCP 分配的情况，拔掉再插上网线后 Windows 系统会自动发送 DHCP 相关请求，要求可能存在的 DHCP 服务器分配 IP，若在网线另一侧机器上运行 DHCP 服务，即可自动设置双机 IP 在同一子网中，也能正常通讯。</p>
-<p><img src="/images/2015-07-21/dhcp-ip-pcap.png" alt="DHCP IP Capture" title="动态 DHCP 抓包结果" /></p>
-<h2 id="实现"><a class="markdownIt-Anchor" href="#实现"></a> 实现</h2>
-<p>参考实现程序<a target="_blank" rel="noopener" href="https://github.com/chaoslawful/nullconf">在此</a>。该程序使用 <code>pcapy</code> 模块操作 <code>WinPCAP</code> 在指定网卡（Windows 环境下通过 <code>wmi</code> 模块自动获得首个可用的有线网卡）上监听数据包，通过 <code>impacket</code> 模块解析后根据数据包特征决定使用静态还是动态配置逻辑，最后用 OS 相关方法设置本地监听的有线网卡 IP 后（Windows 环境下通过 <code>wmi</code> 模块实现）完成双机 IP 配置。</p>
-<h2 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考</h2>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://timgolden.me.uk/python/wmi/tutorial.html">http://timgolden.me.uk/python/wmi/tutorial.html</a></li>
-<li><a target="_blank" rel="noopener" href="https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx">https://msdn.microsoft.com/en-us/library/bg126473(v=vs.85).aspx</a></li>
-<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol">https://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol</a></li>
-</ul>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/04/08/null-modem-auto-conf/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2021/04/08/null-modem-auto-conf/" data-id="cl2rh9fkh001ow1rc1v0ncxhl" data-title="自动配置网线直连数据传输方案" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/08/null-modem-auto-conf/" data-id="cl2unx0nn001osmrc6mzehio7" data-title="自动配置网线直连数据传输方案" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li></ul>
 
@@ -265,15 +275,15 @@
       
         <h3 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h3>
 <p>使用自己电脑的 N 卡进行 CUDA 加速时都希望能使用全部显存，但在 Ubuntu 18.04 LTS 中安装官方专有驱动后，如果用 nvidia-settings 将 PRIME profiles 设为 Nvidia，会让包括 X 桌面在内的所有图形加速功能都走 N 卡，会占用不少显存。若将 PRIME profiles 改为 Intel，N 卡驱动又不会被加载，无法使用 CUDA 加速。</p>
-<h3 id="解决方法"><a class="markdownIt-Anchor" href="#解决方法"></a> 解决方法</h3>
-<p>PRIME profiles 是通过 <code>/usr/bin/prime-select</code> 命令完成切换的，PRIME profiles 设为 Intel 时该命令会生成一个驱动黑名单 <code>/lib/modprobe.d/blacklist-nvidia.conf</code>，修改该文件内容将如下几行注释掉：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">blacklist nvidia</span><br><span class="line">blacklist nvidia-modeset</span><br><span class="line">alias nvidia off</span><br><span class="line">alias nvidia-modeset off</span><br></pre></td></tr></table></figure>
-<p>logout 后重新 login 即可实现 X 桌面系统图形加速走集成显卡且 N 卡驱动正常加载的效果，可使用全部显存进行 CUDA 计算。</p>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/04/08/ubuntu-18-04-cuda-memory/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2021/04/08/ubuntu-18-04-cuda-memory/" data-id="cl2rh9fki001rw1rc2830gp47" data-title="Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/08/ubuntu-18-04-cuda-memory/" data-id="cl2unx0no001rsmrcd5qy7liq" data-title="Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li></ul>
 
@@ -307,16 +317,15 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>尝试在 CentOS 6.x 下编译使用 PyPy 5.x 时发现其生成的 interpreter.c 使用了 <code>__int128</code> 内置类型，但系统自带的 gcc 4.4.x 并不支持该类型，所以需要按如下步骤装一个 gcc 4.9.x：</p>
-<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install centos-release-scl</span><br><span class="line">$ sudo yum install devtoolset-3-gcc devtoolset-3-binutils devtoolset-3-gcc-c++</span><br><span class="line"><span class="comment"># 用如下 scl 命令在新 gcc 环境中执行命令，这里执行的是 bash</span></span><br><span class="line">$ scl <span class="built_in">enable</span> devtoolset-3 bash</span><br><span class="line"><span class="comment"># 进入了新 gcc 环境的 shell，验证一下 gcc 版本</span></span><br><span class="line">$ gcc --version</span><br><span class="line">gcc (GCC) 4.9.2 20150212 (Red Hat 4.9.2-6)</span><br><span class="line">Copyright (C) 2014 Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the <span class="built_in">source</span> <span class="keyword">for</span> copying conditions.  There is NO</span><br><span class="line">warranty; not even <span class="keyword">for</span> MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
-<h3 id="参考"><a class="markdownIt-Anchor" href="#参考"></a> 参考：</h3>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos">http://superuser.com/questions/381160/how-to-install-gcc-4-7-x-4-8-x-on-centos</a></li>
-</ul>
-
+        
+          <p class="article-more-link">
+            <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/" data-id="cl2rh9fkg001mw1rc4bya4b7w" data-title="在 CentOS 6.x 下使用 gcc 4.9.x 的方法" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/" data-id="cl2unx0nl001ksmrc8lcn5670" data-title="在 CentOS 6.x 下使用 gcc 4.9.x 的方法" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
@@ -350,14 +359,16 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>一日同事尝试用 Java 正则库匹配某模式总是抛出 <code>String index out of range</code> 异常，百思不得其解。经过一番研究，得到了这样一个最小复现用例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.regex.*;</span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">RegexBug</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        String s = <span class="string">&quot;x&quot;</span>+Character.highSurrogate(<span class="number">0x10000</span>)+Character.lowSurrogate(<span class="number">0x10000</span>);</span><br><span class="line">        Pattern p = Pattern.compile(<span class="string">&quot;(.)*xx&quot;</span>);</span><br><span class="line">        Matcher m = p.matcher(s);</span><br><span class="line">        <span class="keyword">if</span>(m.find()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;matched&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>跟踪后发现这是 Java 正则库中的一个实现 bug，用例模式中的 <code>(.)*</code> 会被 Pattern 类解析为 GroupCurly 算子，而该算子内对应贪婪匹配模式的 <code>match0</code> 方法实现有误，当某次匹配不成功需要进行回溯时，其假定 <code>.</code> 匹配的任意字符都是相同长度而每次都减去了最后一次匹配成功的字符长度；然而 Java 内部使用 UTF-16 编码保存字符串，仅有 Unicode BMP 内的字符（即码点小于等于 U+FFFF 的字符）才能用单个 char 表示，Unicode SMP 内的字符（即码点大于 U+FFFF 的字符）都需要用 2 个替代码元表示 1 个字符，当匹配目标字符串中有 BMP/SMP 区字符混合存在的情况且匹配不成功时，回溯逻辑的字符等长假定就会失效，导致字符串下标计算出错而出现访问越界异常。不过同在 Pattern 类中表达非捕获重复算子的 Curly 就没有这个问题，如果将以上用例中的 <code>(.)*</code> 改为 <code>.*</code> 就一切正常了。</p>
-<p>经过一番搜索，发现该 bug 已经在 2013-02-01 被人提交给 JDK buglist (<a target="_blank" rel="noopener" href="http://bugs.java.com/bugdatabase/view_bug.do?bug_id=8007395">见这里</a>) ，JDK 5~7 都受其影响，不过该 bug 已经在 JDK 8 中修复了。考虑到 Java 正则库实现细节非常不堪，也许还会有更多的坑在实践中被发现，定期关注一下 <code>java.util.regex</code> 相关的 bug (<a target="_blank" rel="noopener" href="https://search.oracle.com/search/search?search_p_main_operator=all&amp;start=1&amp;group=bugs.sun.com&amp;q=java.util.regex">见这里</a>) 应该是个好主意……</p>
-
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.regex.*;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RegexBug</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span> <span class="string">&quot;x&quot;</span>+Character.highSurrogate(<span class="number">0x10000</span>)+Character.lowSurrogate(<span class="number">0x10000</span>);</span><br><span class="line">        <span class="type">Pattern</span> <span class="variable">p</span> <span class="operator">=</span> Pattern.compile(<span class="string">&quot;(.)*xx&quot;</span>);</span><br><span class="line">        <span class="type">Matcher</span> <span class="variable">m</span> <span class="operator">=</span> p.matcher(s);</span><br><span class="line">        <span class="keyword">if</span>(m.find()) &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;matched&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        
+          <p class="article-more-link">
+            <a href="/2014/03/23/java-regex-bug/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2014/03/23/java-regex-bug/" data-id="cl2rh9fkg001kw1rcavup3fc5" data-title="Java 正则库 bug 一例" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2014/03/23/java-regex-bug/" data-id="cl2unx0nm001msmrcgl5kd7mz" data-title="Java 正则库 bug 一例" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li></ul>
 
@@ -391,43 +402,15 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <p>从 IPython 1.0 开始 IPython Notebook 就自带了 nbconvert 工具，可以将 notebook 转换为 HTML/LaTeX/Markdown/reStructure/Slides 等多种外部格式，以方便内容的快速重用。从内容展现的一致性上看，将 notebook 转成 LaTeX 再处理为 PDF 文件是表现最好的，因此使用频率也最高，然而当 notebook 中出现中文时，默认生成的 LaTeX 文件无法进行支持，会导致最终生成的 PDF 文件中中文部分都是空白。经过实验，对生成的 LaTeX 文件进行如下手工修改可以快速修正此问题：</p>
-<ul>
-<li>首先用 nbconvert 将 notebook 转为 LaTeX 文件：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipython nbconvert --to latex example.ipynb</span><br></pre></td></tr></table></figure>
-<ul>
-<li>在生成的 LaTeX 文件里 <code>\documentclass</code> 行之后增加如下内容：</li>
-</ul>
-<pre>
-\usepackage{fontspec, xunicode, xltxtra}
-\usepackage[slantfont, boldfont]{xeCJK} % 允许斜体和粗体
-\setCJKmainfont{WenQuanYi Micro Hei} % 默认中文字体
-\setCJKmonofont{WenQuanYi Micro Hei Mono} % 中文等宽字体
-\setmainfont{TeX Gyre Pagella} % 英文衬线字体
-\setmonofont{Monaco} % 英文等宽字体
-\setsansfont{Trebuchet MS} % 英文无衬线字体
-\punctstyle{kaiming} % 开明式标点格式: 句末点号用全角, 其他半角
-</pre>
-<ul>
-<li>注释掉生成的 LaTeX 文件里 <code>\usepackage&#123;babel&#125;</code> 这一行</li>
-<li>(可选) 将生成的 LaTeX 文件里 <code>\date&#123;...&#125;</code> 和 <code>\author&#123;...&#125;</code> 中的内容改为需要的日期和作者信息</li>
-<li>最后用支持 UTF-8 的 <code>xelatex</code> 命令直接将修改后的 LaTeX 文件转为 PDF 即可：</li>
-</ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xelatex example.tex</span><br></pre></td></tr></table></figure>
-<p>另外，最后转 PDF 时若出现类似这样的错误：</p>
-<pre>
-> Runaway argument?
-> ! File ended while scanning use of @writefile.
->
-> par
-> l.110 begin{document}
-</pre>
-<p>可以直接删除 <code>*.aux</code> 文件再重新转换即可。</p>
-
+        
+          <p class="article-more-link">
+            <a href="/2014/03/10/ipython-notebook-latex-chinese-solution/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2014/03/10/ipython-notebook-latex-chinese-solution/" data-id="cl2rh9fkf001iw1rc04mbc0p2" data-title="IPython Notebook 转成 LaTeX 时的中文问题解决方案" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2014/03/10/ipython-notebook-latex-chinese-solution/" data-id="cl2unx0nl001ismrccijt2ic7" data-title="IPython Notebook 转成 LaTeX 时的中文问题解决方案" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li></ul>
 
@@ -462,211 +445,15 @@
       
         <h2 id="背景"><a class="markdownIt-Anchor" href="#背景"></a> 背景</h2>
 <p>大家都知道 JVM 有 HotSpot 引擎可以对热代码路径进行有效的 JIT 优化，大幅度提升计算密集代码的性能，但 HotSpot 对自己编写的 Java 代码时进行了哪些 JIT 优化？优化后生成的 native code 长什么样？知道了这些信息之后，才能有的放矢地改进自己的代码。</p>
-<h2 id="初步查看-jit-工作情况"><a class="markdownIt-Anchor" href="#初步查看-jit-工作情况"></a> 初步查看 JIT 工作情况</h2>
-<p>以如下 Java 代码为例：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Accumulator.java</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Accumulator</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">int</span> max = Integer.parseInt(args[<span class="number">0</span>]);</span><br><span class="line">		System.out.println(addAllSqrts(max));</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">addAllSqrts</span><span class="params">(<span class="keyword">int</span> max)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">double</span> accum = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; max; i++) &#123;</span><br><span class="line">			accum = addSqrt(accum, i);</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">return</span> accum;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">addSqrt</span><span class="params">(<span class="keyword">double</span> a, <span class="keyword">int</span> b)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> a + sqrt(b);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">double</span> <span class="title">sqrt</span><span class="params">(<span class="keyword">int</span> a)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> Math.sqrt(a);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>一般情况下，我们只需要知道 JIT 内联函数是否满足自己的期望即可，可以用如下命令行达到这个目的：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac Accumulator.java</span><br><span class="line">java -XX:+PrintCompilation Accumulator 50000</span><br></pre></td></tr></table></figure>
-<p>注意默认情况下一个方法至少要被调用 10k 次以上才可能被 JIT 优化，故这里运行时给出的循环参数也要大于该值，输出结果如下：</p>
-<pre>
-     61    1             Accumulator::addSqrt (7 bytes)
-     62    2             Accumulator::sqrt (6 bytes)
-     67    3 %           Accumulator::addAllSqrts @ 4 (23 bytes)
-...
-</pre>
-<p>各个数据列的含义分别为：</p>
-<table>
-<thead>
-<tr>
-<th style="text-align:left"><strong>列1</strong></th>
-<th style="text-align:left"><strong>列2</strong></th>
-<th style="text-align:left"><strong>列3</strong></th>
-<th style="text-align:left"><strong>列4</strong></th>
-<th style="text-align:left"><strong>列5</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">自 JVM 启动到尝试优化的时间(ms)</td>
-<td style="text-align:left">尝试优化的顺序(从 1 开始)</td>
-<td style="text-align:left">特殊方法标识<sup class="footnote-ref"><a href="#fn1" id="fnref1">[1]</a></sup></td>
-<td style="text-align:left">方法全名及生成代码长度</td>
-<td style="text-align:left">若有 &quot;made not entrant&quot; 或 &quot;made zombie&quot; 字样就表明没有进行优化</td>
-</tr>
-</tbody>
-</table>
-<p>用如下命令行可以更多地了解内联优化的实际情况以及优化发生的级别：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+PrintCompilation -XX:+UnlockDiagnosticVMOptions -XX:+PrintInlining -XX:+TieredCompilation Accumulator 50000</span><br></pre></td></tr></table></figure>
-<p>输出结果如下：</p>
-<pre>
-     50    1       3       java.lang.String::equals (81 bytes)
-     51    2       3       java.lang.Object::<init> (1 bytes)
-     53    3     n 0       java.lang.System::arraycopy (native)   (static)
-     53    4       3       java.lang.String::charAt (29 bytes)
-                              @ 18  java/lang/StringIndexOutOfBoundsException::<init> (not loaded)   not inlineable
-     54    6       3       java.lang.String::hashCode (55 bytes)
-     55    5       3       java.lang.String::indexOf (70 bytes)
-                              @ 66   java.lang.String::indexOfSupplementary (71 bytes)   callee is too large
-     56    7       3       java.lang.String::length (6 bytes)
-     59    8       3       java.lang.Math::min (11 bytes)
-     61    9       3       Accumulator::addSqrt (7 bytes)
-                              @ 2   Accumulator::sqrt (6 bytes)
-                                @ 2   java.lang.Math::sqrt (5 bytes)   intrinsic
-     62   10       3       Accumulator::sqrt (6 bytes)
-                              @ 2   java.lang.Math::sqrt (5 bytes)   intrinsic
-     64   11       4       Accumulator::addSqrt (7 bytes)
-...
-</pre>
-<p>这里新增的第 3 列代表了优化发生的级别（Tier 0~4，其中 Tier 0 为 Interpreter，Tier 1~3 为 client 模式的优化策略，Tier 4 为 server 模式的优化策略）</p>
-<h2 id="查看-jit-生成的汇编代码"><a class="markdownIt-Anchor" href="#查看-jit-生成的汇编代码"></a> 查看 JIT 生成的汇编代码</h2>
-<p>为了更好地了解 JIT 优化效果，查看生成的 native code 是很有必要的，不过 OpenJDK 并没有自带反汇编插件 <code>hsdis-*.so</code> ，需要手工安装一下该插件。一般来说有这样几种安装方法：</p>
-<ol>
-<li>对于 Ubuntu 系的发行版，可以直接用命令 <code>sudo apt-get install libopenjdk-hsdis</code> 安装该插件</li>
-<li>用别人从 OpenJDK 中扣出来的代码自行编译安装，具体见 <a target="_blank" rel="noopener" href="https://github.com/drazzib/openjdk-hsdis">这里</a></li>
-<li>按照 <a target="_blank" rel="noopener" href="https://wikis.oracle.com/display/HotSpotInternals/PrintAssembly">HotSpotInternals - PrintAssembly</a> 中的描述自己从 OpenJDK 源码树中编译</li>
-</ol>
-<p>安装完成后，即可用一下命令输出所有 JIT 后函数的 native code 汇编代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly Accumulator 50000</span><br></pre></td></tr></table></figure>
-<p>输出结果如下：</p>
-<pre>
-Java HotSpot(TM) 64-Bit Server VM warning: PrintAssembly is enabled; turning on DebugNonSafepoints to gain additional output
-Loaded disassembler from hsdis-amd64.so
-Decoding compiled method 0x00007ffd9905ee50:
-Code:
-[Disassembling for mach='i386:x86-64']
-[Entry Point]
-[Verified Entry Point]
-[Constants]
-  # {method} 'addSqrt' '(DI)D' in 'Accumulator'
-  # parm0:    xmm0:xmm0   = double
-  # parm1:    rsi       = int
-  #           [sp+0x20]  (sp of caller)
-  0x00007ffd9905ef80: sub    $0x18,%rsp
-  0x00007ffd9905ef87: mov    %rbp,0x10(%rsp)    ;*synchronization entry
-                                                ; - Accumulator::addSqrt@-1 (line 16)
-  0x00007ffd9905ef8c: vcvtsi2sd %esi,%xmm1,%xmm1
-  0x00007ffd9905ef90: vsqrtsd %xmm1,%xmm1,%xmm1
-  0x00007ffd9905ef94: vaddsd %xmm1,%xmm0,%xmm0  ;*dadd
-                                                ; - Accumulator::addSqrt@5 (line 16)
-  0x00007ffd9905ef98: add    $0x10,%rsp
-  0x00007ffd9905ef9c: pop    %rbp
-  0x00007ffd9905ef9d: test   %eax,0xc5f905d(%rip)        # 0x00007ffda5658000
-                                                ;   {poll_return}
-  0x00007ffd9905efa3: retq
-  0x00007ffd9905efa4: hlt
-  0x00007ffd9905efa5: hlt
-...
-</pre>
-<p>还可以增加选项 <code>-XX:PrintAssemblyOptions=hsdis-print-bytes</code> 额外输出指令实际字节序列：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:+PrintAssembly -XX:PrintAssemblyOptions=hsdis-print-bytes Accumulator 50000</span><br></pre></td></tr></table></figure>
-<p>输出结果为：</p>
-<pre>
-Java HotSpot(TM) 64-Bit Server VM warning: PrintAssembly is enabled; turning on DebugNonSafepoints to gain additional output
-Loaded disassembler from hsdis-amd64.so
-Decoding compiled method 0x00007f482105ee50:
-Code:
-[Disassembling for mach='i386:x86-64']
-[Entry Point]
-[Verified Entry Point]
-[Constants]
-  # {method} 'sqrt' '(I)D' in 'Accumulator'
-  # parm0:    rsi       = int
-  #           [sp+0x20]  (sp of caller)
-  0x00007f482105ef80: sub    $0x18,%rsp         ;...4881ec18 000000
-  0x00007f482105ef87: mov    %rbp,0x10(%rsp)    ;...48896c24 10
-                                                ;*synchronization entry
-                                                ; - Accumulator::sqrt@-1 (line 20)
-  0x00007f482105ef8c: vcvtsi2sd %esi,%xmm0,%xmm0  ;...c5fb2ac6
-  0x00007f482105ef90: vsqrtsd %xmm0,%xmm0,%xmm0  ;...c5fb51c0
-                                                ;*invokestatic sqrt
-                                                ; - Accumulator::sqrt@2 (line 20)
-  0x00007f482105ef94: add    $0x10,%rsp         ;...4883c410
-  0x00007f482105ef98: pop    %rbp               ;...5d
-  0x00007f482105ef99: test   %eax,0xc048061(%rip)        # 0x00007f482d0a7000
-                                                ;...85056180 040c
-                                                ;   {poll_return}
-  0x00007f482105ef9f: retq                      ;...c3
-[Exception Handler]
-[Stub Code]
-  0x00007f482105efa0: jmpq   0x00007f482105eda0  ;...e9fbfdff ff
-                                                ;   {no_reloc}
-[Deopt Handler Code]
-  0x00007f482105efa5: callq  0x00007f482105efaa  ;...e8000000 00
-  0x00007f482105efaa: subq   $0x5,(%rsp)        ;...48832c24 05
-  0x00007f482105efaf: jmpq   0x00007f4821038f00  ;...e94c9ffd ff
-                                                ;   {runtime_call}
-  0x00007f482105efb4: hlt                       ;...f4
-...
-</pre>
-<p>上述命令总是输出所有方法的 JIT 结果，当结果很多时难以看出重点，可以将 <code>-XX:+PrintAssembly</code> 选项改为 <code>-XX:CompileCommand=print,*class.method</code> 来限制输出哪些方法，例如：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=<span class="string">&#x27;print,*Accumulator.sqrt&#x27;</span> Accumulator 50000</span><br></pre></td></tr></table></figure>
-<p>这样输出结果就变得很少了：</p>
-<pre>
-CompilerOracle: print *Accumulator.sqrt
-Java HotSpot(TM) 64-Bit Server VM warning: printing of assembly code is enabled; turning on DebugNonSafepoints to gain additional output
-Compiled method (c2)      62    2             Accumulator::sqrt (6 bytes)
- total in heap  [0x00007fcacc1d18d0,0x00007fcacc1d1a98] = 456
- relocation     [0x00007fcacc1d19f0,0x00007fcacc1d19f8] = 8
- main code      [0x00007fcacc1d1a00,0x00007fcacc1d1a20] = 32
- stub code      [0x00007fcacc1d1a20,0x00007fcacc1d1a38] = 24
- oops           [0x00007fcacc1d1a38,0x00007fcacc1d1a40] = 8
- scopes data    [0x00007fcacc1d1a40,0x00007fcacc1d1a50] = 16
- scopes pcs     [0x00007fcacc1d1a50,0x00007fcacc1d1a90] = 64
- dependencies   [0x00007fcacc1d1a90,0x00007fcacc1d1a98] = 8
-Loaded disassembler from hsdis-amd64.so
-Decoding compiled method 0x00007fcacc1d18d0:
-Code:
-[Disassembling for mach='i386:x86-64']
-[Entry Point]
-[Verified Entry Point]
-[Constants]
-  # {method} 'sqrt' '(I)D' in 'Accumulator'
-  # parm0:    rsi       = int
-  #           [sp+0x20]  (sp of caller)
-  0x00007fcacc1d1a00: sub    $0x18,%rsp
-  0x00007fcacc1d1a07: mov    %rbp,0x10(%rsp)    ;*synchronization entry
-                                                ; - Accumulator::sqrt@-1 (line 20)
-  0x00007fcacc1d1a0c: vcvtsi2sd %esi,%xmm0,%xmm0
-  0x00007fcacc1d1a10: vsqrtsd %xmm0,%xmm0,%xmm0  ;*invokestatic sqrt
-                                                ; - Accumulator::sqrt@2 (line 20)
-  0x00007fcacc1d1a14: add    $0x10,%rsp
-  0x00007fcacc1d1a18: pop    %rbp
-  0x00007fcacc1d1a19: test   %eax,0x9ea55e1(%rip)        # 0x00007fcad6077000
-                                                ;   {poll_return}
-  0x00007fcacc1d1a1f: retq
-[Exception Handler]
-[Stub Code]
-  0x00007fcacc1d1a20: jmpq   0x00007fcacc1ceda0  ;   {no_reloc}
-[Deopt Handler Code]
-  0x00007fcacc1d1a25: callq  0x00007fcacc1d1a2a
-  0x00007fcacc1d1a2a: subq   $0x5,(%rsp)
-  0x00007fcacc1d1a2f: jmpq   0x00007fcacc1a8f00  ;   {runtime_call}
-  0x00007fcacc1d1a34: hlt
-  0x00007fcacc1d1a35: hlt
-  0x00007fcacc1d1a36: hlt
-  0x00007fcacc1d1a37: hlt
-OopMapSet contains 0 OopMaps
-</pre>
-<p><strong>Tips：</strong> 用如下命令能看到 JVM 支持的所有内部选项及其当前值，可以用于排查环境问题或进行细节调整：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">java -XX:+AggressiveOpts -XX:+UnlockDiagnosticVMOptions -XX:+UnlockExperimentalVMOptions -XX:+PrintFlagsFinal -version</span><br></pre></td></tr></table></figure>
-<h2 id="参考资料"><a class="markdownIt-Anchor" href="#参考资料"></a> 参考资料</h2>
-<ul>
-<li><a target="_blank" rel="noopener" href="http://www.slideshare.net/CharlesNutter/javaone-2012-jvm-jit-for-dummies">JVM JIT for Dummies</a></li>
-<li><a target="_blank" rel="noopener" href="https://wikis.oracle.com/display/HotSpotInternals/PrintAssembly">HotSpotInternals - PrintAssembly</a></li>
-<li><a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/9341083/how-to-use-xxunlockdiagnosticvmoptions-xxcompilecommand-print-option-with-j">How to use -XX:+UnlockDiagnosticVMOptions -XX:CompileCommand=print option with JVM HotSpot</a></li>
-</ul>
-<hr class="footnotes-sep" />
-<section class="footnotes">
-<ol class="footnotes-list">
-<li id="fn1" class="footnote-item"><p><code>!</code> 表示是异常处理函数， <code>n</code> 表示是 native 函数， <code>%</code> 表示进行了 OSR（On-Stack Replace） 优化 <a href="#fnref1" class="footnote-backref">↩︎</a></p>
-</li>
-</ol>
-</section>
-
+        
+          <p class="article-more-link">
+            <a href="/2014/01/16/openjdk-inspect-jit-result/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2014/01/16/openjdk-inspect-jit-result/" data-id="cl2rh9fke001fw1rcbwx32omk" data-title="OpenJDK 中查看 JIT 编译结果的方法" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2014/01/16/openjdk-inspect-jit-result/" data-id="cl2unx0nk001fsmrc4vsm2elr" data-title="OpenJDK 中查看 JIT 编译结果的方法" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li></ul>
 
@@ -703,73 +490,17 @@ OopMapSet contains 0 OopMaps
 <p>用 USB 线连接手机，执行 <code>lsusb</code> 命令后可以看到如下内容：</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Bus 001 Device 010: ID 4bb0:30d2</span><br></pre></td></tr></table></figure>
 <p>那么 vendor id 就是 <code>0x4bb0</code></p>
-<h2 id="增加识别手机设备的-udev-规则"><a class="markdownIt-Anchor" href="#增加识别手机设备的-udev-规则"></a> 增加识别手机设备的 udev 规则</h2>
-<p>编辑 <code>/etc/udev/rules.d/51-android.rules</code> ，加入如下内容：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SUBSYSTEM==<span class="string">&quot;usb&quot;</span>, ATTRS&#123;idVendor&#125;==<span class="string">&quot;4bb0&quot;</span>, MODE=<span class="string">&quot;0666&quot;</span>, GROUP=<span class="string">&quot;plugdev&quot;</span></span><br></pre></td></tr></table></figure>
-<p>这里 <code>ATTRS&#123;idVendor&#125;</code> 条件之后填的就是上面获得的 vendor id。</p>
-<p>添加完毕后执行 <code>sudo reload udev</code> 重新加载新的 udev 规则，然后重新插拔一次手机</p>
-<h2 id="让-adb-识别手机设备"><a class="markdownIt-Anchor" href="#让-adb-识别手机设备"></a> 让 adb 识别手机设备</h2>
-<p>做完以上步骤后 <code>adb devices</code> 仍然不能识别手机，因为京崎的 vendor id 并没有放在 Android SDK 的默认厂商列表中。</p>
-<p>这里需要修改 <code>~/.android/adb_usb.ini</code> ，在最末尾增加 16 进制格式的 vendor id，这里增加后的内容就是：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ANDROID 3RD PARTY USB VENDOR ID LIST -- DO NOT EDIT.</span></span><br><span class="line"><span class="comment"># USE &#x27;android update adb&#x27; TO GENERATE.</span></span><br><span class="line"><span class="comment"># 1 USB VENDOR ID PER LINE.</span></span><br><span class="line"></span><br><span class="line">0x4bb0</span><br></pre></td></tr></table></figure>
-<p>注意运行 <code>android update adb</code> 会清空该文件，慎用此命令！</p>
-<p>最后执行如下命令重启 adb server 即可：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">adb kill-server</span><br><span class="line">adb start-server</span><br><span class="line">adb devices</span><br></pre></td></tr></table></figure>
-<p>看到 <code>adb devices</code> 显示如下字样就是成功了：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">List of devices attached</span><br><span class="line">0123456789ABCDEF	device</span><br></pre></td></tr></table></figure>
-
+        
+          <p class="article-more-link">
+            <a href="/2013/10/09/ubuntu-adb-connect-tooky-t85/#more">Read More</a>
+          </p>
+        
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2013/10/09/ubuntu-adb-connect-tooky-t85/" data-id="cl2rh9fkd001dw1rc5uup074r" data-title="在 Ubuntu 下用 adb 连接京崎 Tooky T85 手机" class="article-share-link">分享</a>
+      <a data-url="https://chaoslawful.info/2013/10/09/ubuntu-adb-connect-tooky-t85/" data-id="cl2unx0nj001dsmrc6l4tddli" data-title="在 Ubuntu 下用 adb 连接京崎 Tooky T85 手机" class="article-share-link">分享</a>
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-complete-chroot" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/2013/09/10/complete-chroot/" class="article-date">
-  <time class="dt-published" datetime="2013-09-10T06:22:00.000Z" itemprop="datePublished">2013-09-10</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/2013/09/10/complete-chroot/">完整的 chroot 过程</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>直接简单地运行 <code>chroot &lt;new-root-dir&gt;</code> 不足以正常运行一些程序，因为很多程序需要访问 <code>procfs</code> 、 <code>sysfs</code> 、 <code>devfs</code> 等特殊的子目录，直接 <code>chroot</code> 更改根目录后这些子目录没有被挂载，内容都是空，导致这些程序出现问题。</p>
-<p>完整的 <code>chroot</code> 前准备过程可以通过下列命令完成：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> &lt;new-root-dir&gt;</span><br><span class="line">mount -t proc proc proc/</span><br><span class="line">mount -t sysfs sys sys/</span><br><span class="line">mount -o <span class="built_in">bind</span> /dev dev/</span><br><span class="line">mount -t devpts pts dev/pts/</span><br><span class="line">cp -L /etc/resolv.conf etc/resolv.conf</span><br></pre></td></tr></table></figure>
-<p>上述命令将宿主系统的 <code>procfs</code> 、 <code>sysfs</code> 、 <code>devfs</code> 等特殊目录挂载到新的根目录下对应子目录上，并设置 <code>chroot</code> 系统使用宿主系统的域名解析配置，最后用以下命令即可完成 <code>chroot</code> 操作：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chroot &lt;new-root-dir&gt; /bin/bash</span><br></pre></td></tr></table></figure>
-<p>参考：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://wiki.archlinux.org/index.php/Change_Root">https://wiki.archlinux.org/index.php/Change_Root</a></li>
-</ul>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://chaoslawful.info/2013/09/10/complete-chroot/" data-id="cl2rh9fkc001bw1rc0u9je4c0" data-title="完整的 chroot 过程" class="article-share-link">分享</a>
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li></ul>
 
     </footer>
   </div>
@@ -796,7 +527,7 @@ OopMapSet contains 0 OopMaps
   <div class="widget-wrap">
     <h3 class="widget-title">标签</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ANTLR/" rel="tag">ANTLR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Alienware/" rel="tag">Alienware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eclipse/" rel="tag">Eclipse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/" rel="tag">Emacs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/" rel="tag">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GNUCash/" rel="tag">GNUCash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lombok/" rel="tag">Lombok</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDR/" rel="tag">SDR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/etymology/" rel="tag">etymology</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hack/" rel="tag">hack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org-mode/" rel="tag">org-mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org2blog/" rel="tag">org2blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/patch/" rel="tag">patch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resource/" rel="tag">resource</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpm/" rel="tag">rpm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/utrace/" rel="tag">utrace</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ANTLR/" rel="tag">ANTLR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ARM/" rel="tag">ARM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Alienware/" rel="tag">Alienware</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Apache/" rel="tag">Apache</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Boost/" rel="tag">Boost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/" rel="tag">C++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CLIP/" rel="tag">CLIP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CUDA/" rel="tag">CUDA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DNS/" rel="tag">DNS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Disco-Diffusion/" rel="tag">Disco Diffusion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ELF/" rel="tag">ELF</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Eclipse/" rel="tag">Eclipse</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Emacs/" rel="tag">Emacs</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Erlang/" rel="tag">Erlang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ext3/" rel="tag">Ext3</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GCC/" rel="tag">GCC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/GNUCash/" rel="tag">GNUCash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hyper-V/" rel="tag">Hyper-V</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPC/" rel="tag">IPC</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/IPython/" rel="tag">IPython</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JIT/" rel="tag">JIT</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Linux/" rel="tag">Linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Lombok/" rel="tag">Lombok</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Maven/" rel="tag">Maven</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/NVIDIA/" rel="tag">NVIDIA</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Networking/" rel="tag">Networking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/PHP/" rel="tag">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RPM/" rel="tag">RPM</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SDR/" rel="tag">SDR</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SELinux/" rel="tag">SELinux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Tooky/" rel="tag">Tooky</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ubuntu/" rel="tag">Ubuntu</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/VQGAN/" rel="tag">VQGAN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Virtualization/" rel="tag">Virtualization</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WSL/" rel="tag">WSL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Win10/" rel="tag">Win10</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/WinXP/" rel="tag">WinXP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/XEN/" rel="tag">XEN</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/deb/" rel="tag">deb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/etymology/" rel="tag">etymology</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hack/" rel="tag">hack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/i18n/" rel="tag">i18n</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/kernel/" rel="tag">kernel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org-mode/" rel="tag">org-mode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/org2blog/" rel="tag">org2blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/patch/" rel="tag">patch</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/regexp/" rel="tag">regexp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resource/" rel="tag">resource</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rpm/" rel="tag">rpm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/utrace/" rel="tag">utrace</a></li></ul>
     </div>
   </div>
 
@@ -806,7 +537,7 @@ OopMapSet contains 0 OopMaps
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/ANTLR/" style="font-size: 10px;">ANTLR</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/Alienware/" style="font-size: 10px;">Alienware</a> <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Apache/" style="font-size: 10px;">Apache</a> <a href="/tags/Boost/" style="font-size: 10px;">Boost</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Eclipse/" style="font-size: 10px;">Eclipse</a> <a href="/tags/Emacs/" style="font-size: 12.5px;">Emacs</a> <a href="/tags/Erlang/" style="font-size: 10px;">Erlang</a> <a href="/tags/Ext3/" style="font-size: 10px;">Ext3</a> <a href="/tags/GCC/" style="font-size: 12.5px;">GCC</a> <a href="/tags/GNUCash/" style="font-size: 12.5px;">GNUCash</a> <a href="/tags/Hyper-V/" style="font-size: 10px;">Hyper-V</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/JIT/" style="font-size: 10px;">JIT</a> <a href="/tags/Java/" style="font-size: 17.5px;">Java</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Lombok/" style="font-size: 10px;">Lombok</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/SDR/" style="font-size: 10px;">SDR</a> <a href="/tags/SELinux/" style="font-size: 10px;">SELinux</a> <a href="/tags/Tooky/" style="font-size: 10px;">Tooky</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/Virtualization/" style="font-size: 12.5px;">Virtualization</a> <a href="/tags/WSL/" style="font-size: 12.5px;">WSL</a> <a href="/tags/Win10/" style="font-size: 12.5px;">Win10</a> <a href="/tags/WinXP/" style="font-size: 10px;">WinXP</a> <a href="/tags/XEN/" style="font-size: 10px;">XEN</a> <a href="/tags/deb/" style="font-size: 10px;">deb</a> <a href="/tags/etymology/" style="font-size: 10px;">etymology</a> <a href="/tags/hack/" style="font-size: 12.5px;">hack</a> <a href="/tags/i18n/" style="font-size: 10px;">i18n</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/org-mode/" style="font-size: 10px;">org-mode</a> <a href="/tags/org2blog/" style="font-size: 12.5px;">org2blog</a> <a href="/tags/patch/" style="font-size: 10px;">patch</a> <a href="/tags/regexp/" style="font-size: 10px;">regexp</a> <a href="/tags/resource/" style="font-size: 10px;">resource</a> <a href="/tags/rpm/" style="font-size: 10px;">rpm</a> <a href="/tags/utrace/" style="font-size: 10px;">utrace</a>
+      <a href="/tags/ANTLR/" style="font-size: 10px;">ANTLR</a> <a href="/tags/ARM/" style="font-size: 10px;">ARM</a> <a href="/tags/Alienware/" style="font-size: 10px;">Alienware</a> <a href="/tags/Android/" style="font-size: 10px;">Android</a> <a href="/tags/Apache/" style="font-size: 10px;">Apache</a> <a href="/tags/Boost/" style="font-size: 10px;">Boost</a> <a href="/tags/C/" style="font-size: 10px;">C</a> <a href="/tags/C/" style="font-size: 12.5px;">C++</a> <a href="/tags/CLIP/" style="font-size: 10px;">CLIP</a> <a href="/tags/CUDA/" style="font-size: 10px;">CUDA</a> <a href="/tags/DNS/" style="font-size: 10px;">DNS</a> <a href="/tags/Disco-Diffusion/" style="font-size: 10px;">Disco Diffusion</a> <a href="/tags/ELF/" style="font-size: 10px;">ELF</a> <a href="/tags/Eclipse/" style="font-size: 10px;">Eclipse</a> <a href="/tags/Emacs/" style="font-size: 12.5px;">Emacs</a> <a href="/tags/Erlang/" style="font-size: 10px;">Erlang</a> <a href="/tags/Ext3/" style="font-size: 10px;">Ext3</a> <a href="/tags/GCC/" style="font-size: 12.5px;">GCC</a> <a href="/tags/GNUCash/" style="font-size: 12.5px;">GNUCash</a> <a href="/tags/Hyper-V/" style="font-size: 10px;">Hyper-V</a> <a href="/tags/IPC/" style="font-size: 10px;">IPC</a> <a href="/tags/IPython/" style="font-size: 10px;">IPython</a> <a href="/tags/JIT/" style="font-size: 10px;">JIT</a> <a href="/tags/Java/" style="font-size: 17.5px;">Java</a> <a href="/tags/Linux/" style="font-size: 20px;">Linux</a> <a href="/tags/Lombok/" style="font-size: 10px;">Lombok</a> <a href="/tags/Maven/" style="font-size: 10px;">Maven</a> <a href="/tags/NVIDIA/" style="font-size: 10px;">NVIDIA</a> <a href="/tags/Networking/" style="font-size: 15px;">Networking</a> <a href="/tags/PHP/" style="font-size: 10px;">PHP</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/RPM/" style="font-size: 10px;">RPM</a> <a href="/tags/SDR/" style="font-size: 10px;">SDR</a> <a href="/tags/SELinux/" style="font-size: 10px;">SELinux</a> <a href="/tags/Tooky/" style="font-size: 10px;">Tooky</a> <a href="/tags/Ubuntu/" style="font-size: 10px;">Ubuntu</a> <a href="/tags/VQGAN/" style="font-size: 10px;">VQGAN</a> <a href="/tags/Virtualization/" style="font-size: 12.5px;">Virtualization</a> <a href="/tags/WSL/" style="font-size: 12.5px;">WSL</a> <a href="/tags/Win10/" style="font-size: 12.5px;">Win10</a> <a href="/tags/WinXP/" style="font-size: 10px;">WinXP</a> <a href="/tags/XEN/" style="font-size: 10px;">XEN</a> <a href="/tags/deb/" style="font-size: 10px;">deb</a> <a href="/tags/etymology/" style="font-size: 10px;">etymology</a> <a href="/tags/hack/" style="font-size: 12.5px;">hack</a> <a href="/tags/i18n/" style="font-size: 10px;">i18n</a> <a href="/tags/kernel/" style="font-size: 10px;">kernel</a> <a href="/tags/org-mode/" style="font-size: 10px;">org-mode</a> <a href="/tags/org2blog/" style="font-size: 12.5px;">org2blog</a> <a href="/tags/patch/" style="font-size: 10px;">patch</a> <a href="/tags/regexp/" style="font-size: 10px;">regexp</a> <a href="/tags/resource/" style="font-size: 10px;">resource</a> <a href="/tags/rpm/" style="font-size: 10px;">rpm</a> <a href="/tags/utrace/" style="font-size: 10px;">utrace</a>
     </div>
   </div>
 
@@ -815,7 +546,7 @@ OopMapSet contains 0 OopMaps
   <div class="widget-wrap">
     <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">十月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/03/">三月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/02/">二月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">一月 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">十二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/08/">八月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/02/">二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/01/">一月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">十二月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/11/">十一月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/07/">七月 2009</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/05/">五月 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">四月 2021</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/01/">一月 2014</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/10/">十月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/09/">九月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/08/">八月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/03/">三月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/02/">二月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/01/">一月 2012</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2011/01/">一月 2011</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/12/">十二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/08/">八月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/02/">二月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2010/01/">一月 2010</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/12/">十二月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/11/">十一月 2009</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2009/07/">七月 2009</a></li></ul>
     </div>
   </div>
 
@@ -826,6 +557,10 @@ OopMapSet contains 0 OopMaps
     <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2022/05/06/clip-vqgan-keywords/">CLIP+VQGAN 风格关键词示例</a>
+          </li>
         
           <li>
             <a href="/2021/04/10/win10-home-hyperv-install/">Win10 家庭版上安装 Hyper-V 的方法</a>
@@ -841,10 +576,6 @@ OopMapSet contains 0 OopMaps
         
           <li>
             <a href="/2021/04/08/ubuntu-18-04-cuda-memory/">Ubuntu 18.04 LTS 中让桌面系统不占用 N 卡显存的方法</a>
-          </li>
-        
-          <li>
-            <a href="/2021/04/08/2021-04-08-centos-6-inst-gcc-4-9/">在 CentOS 6.x 下使用 gcc 4.9.x 的方法</a>
           </li>
         
       </ul>
